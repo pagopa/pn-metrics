@@ -1,0 +1,61 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "labelBackgroundColor": "#0B3D91",
+    "labelTextColor": "#FFFFFF",
+    "entityBkgColor": "#FFFFFF",
+    "attributeBkgColor": "#FFFFFF",
+    "background": "#FFFFFF"
+  }
+}}%%
+erDiagram
+    direction LR
+
+    NOTIFICATIONS {
+        string iun PK
+        int amount
+        string cancelledByIun
+        string cancelledIun
+        string group
+        string idempotenceToken
+        string abstract
+        string notificationFeePolicy
+        string pagoPaIntMode
+        string paNotificationId
+        string paymentExpirationDate
+        string physicalCommunicationType
+        string senderDenomination
+        string senderPaId
+        string senderTaxId
+        timestamp sentAt
+        string sourceChannel
+        string sourceChannelDetails
+        string subject
+        string taxonomyCode
+        int paFee
+        int vat
+        string version
+        object usedServices
+        array documents
+        array recipients
+    }
+
+    NOTIFICATIONS_REQUEST_UNIQUENESS {
+        string requestId PK
+    }
+
+    TIMELINE {
+        string timelineElementId PK
+        string category
+        timestamp businessTimestamp
+        object details
+        string iun FK
+        array legalFactId
+        timestamp notificationSentAt
+        string paId
+        object statusInfo
+        timestamp timestamp
+    }
+
+    NOTIFICATIONS ||--o{ TIMELINE : "1:N"
+    NOTIFICATIONS_REQUEST_UNIQUENESS ||--|| NOTIFICATIONS : "1:1"
