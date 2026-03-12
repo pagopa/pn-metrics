@@ -1,72 +1,58 @@
 # Pn-metrics
 
-Questo repository contiene script e query di analisi per monitorare il prodotto SEND.
+Questo repository raccoglie script, query e materiali di supporto per l'analisi e il monitoraggio del prodotto SEND.
 
 ## Mermaid Diagrams – Quick Guide
 
-Questa guida spiega come creare, gestire ed esportare **diagrammi Mermaid** utilizzando **Visual Studio Code (VS Code)** con l'estensione **Mermaid Preview**. Mermaid è un linguaggio di markup per generare diagrammi e grafici direttamente dal testo, utile per documentare modelli dati, workflow e architetture.
+Questa guida descrive in modo essenziale come creare, gestire ed esportare diagrammi Mermaid in Visual Studio Code tramite l'estensione Mermaid Preview.
 
-### Perché usare Mermaid?
+### Workflow consigliato
 
-Mermaid offre numerosi vantaggi:
-- **Semplicità**: Sintassi testuale facile da scrivere e modificare.
-- **Versionamento**: I diagrammi sono file di testo, ideali per il controllo versione Git.
-- **Integrazione**: Supporto nativo in piattaforme come GitHub, Confluence e documentazione tecnica.
-- **Varietà**: Supporta diagrammi ER, flowchart, Gantt, sequenza e altro.
-- **Collaborazione**: Facilita la condivisione e la revisione di diagrammi tecnici.
-- **Efficienza**: Creazione rapida senza bisogno di tool grafici complessi.
+Per mantenere i diagrammi ordinati, aggiornati e coerenti con il repository, si suggerisce il seguente flusso:
 
-### Workflow Consigliato
+1. **Scrittura e manutenzione**: salvare i diagrammi come file `.mmd` direttamente nel repository, così da versionarli insieme al codice.
+2. **Visualizzazione in sviluppo**: utilizzare Mermaid Preview per controllare il risultato grafico durante la modifica.
+3. **Esportazione**: generare PNG o SVG solo quando necessario per documentazione esterna o presentazioni.
 
-Per mantenere i diagrammi organizzati e aggiornati, segui questo flusso di lavoro:
-
-1. **Scrittura e manutenzione**: Scrivi e mantieni i diagrammi come file Mermaid (`.mmd`) direttamente nel repository. Questo garantisce che i diagrammi siano versionati insieme al codice.
-2. **Visualizzazione durante lo sviluppo**: Usa l'estensione Mermaid Preview in VS Code per visualizzare i diagrammi in tempo reale mentre li modifichi.
-3. **Esportazione per documentazione**: Quando necessario, esporta le immagini (PNG o SVG) dall'estensione per includerle in documenti esterni o presentazioni.
-
-Questo approccio assicura che i diagrammi rimangano sincronizzati con il codice e siano facilmente accessibili al team.
+Questo approccio semplifica la manutenzione e garantisce l'allineamento tra documentazione e contenuti versionati.
 
 ### Prerequisiti
 
-Prima di iniziare, assicurati di avere tutto il necessario:
+Prima di procedere, verificare di disporre di:
 
-- **Visual Studio Code**: Editor di testo gratuito e potente. Scaricalo da [code.visualstudio.com](https://code.visualstudio.com/).
-- **Estensione Mermaid Preview**: Per visualizzare e gestire i diagrammi Mermaid:
-  - Installazione: Apri VS Code, vai su Extensions (Ctrl+Shift+X), cerca "Mermaid Preview" e installa l'estensione.
-  - Link diretto: https://marketplace.visualstudio.com/items?itemName=vstirbu.vscode-mermaid-preview
-  - Funzionalità: Permette di aprire una preview interattiva, esportare diagrammi e personalizzare temi.
-- **Navigazione nel repository**: Assicurati di essere nella cartella corretta dove salvare i file dei diagrammi (ad esempio, `pn-metrics/data_model/`).
+- **Visual Studio Code**: scaricabile da [code.visualstudio.com](https://code.visualstudio.com/).
+- **Estensione Mermaid Preview**:
+  - installazione tramite pannello Extensions (`Ctrl+Shift+X`) cercando “Mermaid Preview”;
+  - link diretto: https://marketplace.visualstudio.com/items?itemName=vstirbu.vscode-mermaid-preview;
+  - funzionalità principali: anteprima interattiva, esportazione e personalizzazione del tema.
+- **Posizione corretta nel repository**: salvare i file `.mmd` nella cartella più adatta al contenuto rappresentato.
 
-### Convenzioni di Naming
+### Convenzioni di naming
 
-Per mantenere l'ordine e la tracciabilità, segui queste regole di naming per ogni workflow logico che coinvolge entità del modello dati:
+Per favorire ordine e tracciabilità, adottare le seguenti convenzioni:
 
 - **File Mermaid (`.mmd`)**:
-  - Nome: Deve riflettere il workflow o il modulo logico rappresentato.
-  - Esempio: `pn_delivery.mmd` per il workflow di consegna delle notifiche.
-  - Posizione: Salva nella cartella appropriata, come `data_model/`.
+  - il nome deve descrivere il workflow o il modulo logico rappresentato, seguito dal tipo di diagramma;
+  - esempio: `timeline_notifications_er.mmd`.
 
-- **Immagine esportata (PNG o SVG)**:
-  - Nome: Stesso nome del file `.mmd`, con aggiunta della data di esportazione in formato `DD_MM_YYYY_MM_DD` e versione (`v1`, `v2`, ecc.).
-  - Esempio: `pn_delivery_10_03_2026_v1.png`.
-  - Scopo: Usata per documentazione esterna dove non è possibile visualizzare i diagrammi interattivi.
+- **Immagini esportate (PNG o SVG)**:
+  - utilizzare lo stesso nome del file `.mmd`, aggiungendo data di esportazione e versione;
+  - esempio: `timeline_notifications_er_10_03_2026_v1.png`.
 
-Questo sistema facilita la ricerca e l'aggiornamento dei diagrammi.
+Questa convenzione rende più semplice individuare, aggiornare e confrontare i diagrammi nel tempo.
 
-### Creare File Mermaid
+### Creazione di un file Mermaid
 
-Segui questi passi per creare un nuovo diagramma:
+Per creare un nuovo diagramma:
 
-1. **Crea un file Mermaid**: In VS Code, crea un nuovo file con estensione `.mmd` (es. `nuovo_diagramma.mmd`).
-2. **Scrivi il codice Mermaid**: Inserisci direttamente la sintassi Mermaid nel file, senza delimitatori Markdown.
-3. **Usa la sintassi appropriata**: Scegli il tipo di diagramma (ER, flowchart, ecc.) e scrivi il codice corrispondente.
-4. **Salva il file**: Salvalo nella cartella designata del repository.
+1. creare un file con estensione `.mmd`, ad esempio `nuovo_diagramma.mmd`;
+2. inserire direttamente la sintassi Mermaid;
+3. scegliere il tipo di diagramma appropriato, ad esempio ER o flowchart;
+4. salvare il file nella cartella designata del repository.
 
-#### Esempi di Diagrammi
+#### Esempio
 
-Ecco alcuni esempi pratici per iniziare. Questi sono codice Mermaid puro da inserire direttamente in un file `.mmd`:
-
-**Entity Relationship Diagram (ERD) semplice**:
+Di seguito un esempio minimale di diagramma ER:
 
 ```
 erDiagram
@@ -83,36 +69,36 @@ erDiagram
     ENTITY_A ||--o{ ENTITY_B : "has"
 ```
 
-Questo diagramma rappresenta:
-- `ENTITY_A` come entità principale con chiave primaria `id`.
-- `ENTITY_B` come entità figlia collegata tramite chiave esterna `entityAId`.
-- Una relazione uno-a-molti: un'istanza di `ENTITY_A` può avere molte istanze di `ENTITY_B`.
+Il diagramma rappresenta:
 
-### Visualizzare il Diagramma in VS Code
+- `ENTITY_A` come entità principale con chiave primaria `id`;
+- `ENTITY_B` come entità correlata tramite chiave esterna `entityAId`;
+- una relazione uno-a-molti tra `ENTITY_A` e `ENTITY_B`.
 
-Per vedere il diagramma mentre lavori:
+### Visualizzazione in VS Code
 
-1. Apri il file `.mmd` in VS Code.
-2. Usa il comando dell'estensione: Premi `Ctrl+Shift+P` (o `Cmd+Shift+P` su Mac) per aprire la palette comandi, cerca "Mermaid Preview: Diagram Preview" e selezionalo.
-3. Si aprirà una nuova scheda con l'anteprima interattiva del diagramma.
-4. Modifica il codice nel file e salva: l'anteprima si aggiornerà automaticamente.
+Per aprire l'anteprima del diagramma:
 
-L'estensione supporta anche zoom, pan e altre interazioni per esplorare diagrammi complessi.
+1. aprire il file `.mmd` in VS Code;
+2. richiamare la Command Palette con `Ctrl+Shift+P`;
+3. selezionare il comando **Mermaid Preview: Diagram Preview**;
+4. aggiornare e salvare il file per vedere l'anteprima ricaricarsi automaticamente.
 
-Se l'estensione non funziona, verifica che sia installata, abilitata e che il file abbia estensione `.mmd`.
+L'anteprima supporta anche operazioni di navigazione utili, come zoom e spostamento.
 
-### Esportare il Diagramma come Immagine
+Se la preview non è disponibile, verificare che l'estensione sia installata, attiva e che il file abbia estensione `.mmd`.
 
-Quando hai bisogno di un'immagine statica per documenti o presentazioni:
+### Esportazione come immagine
 
-1. Apri l'anteprima del diagramma come descritto sopra.
-2. Nella scheda dell'anteprima, usa il pulsante "Export" o "Download" fornito dall'estensione per salvare come PNG o SVG.
-3. In alternativa, fai uno screenshot dell'anteprima per una soluzione rapida.
-4. Rinomina il file seguendo le convenzioni di naming (es. `nome_diagramma_2026_03_10_v1.png`).
+Quando serve una versione statica del diagramma:
 
-L'estensione Mermaid Preview facilita l'esportazione diretta senza bisogno di tool esterni.
+1. aprire l'anteprima;
+2. usare il comando di esportazione dell'estensione per salvare in PNG o SVG;
+3. rinominare il file secondo la convenzione definita.
 
-### Risorse Aggiuntive
+In alternativa, per esigenze rapide, è possibile acquisire uno screenshot dell'anteprima.
 
-- **Documentazione Mermaid**: [mermaid.js.org](https://mermaid.js.org/) – Guida completa alla sintassi e tipi di diagrammi.
-- **Esempi avanzati**: Esplora la galleria su [mermaid.live](https://mermaid.live) per ispirazione.
+### Risorse aggiuntive
+
+- **Documentazione Mermaid**: [mermaid.js.org](https://mermaid.js.org/)
+- **Esempi e playground**: [mermaid.live](https://mermaid.live)
