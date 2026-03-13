@@ -32,12 +32,12 @@ Prima di procedere, verificare di disporre di:
 Per favorire ordine e tracciabilità, adottare le seguenti convenzioni:
 
 - **File Mermaid (`.mmd`)**:
-  - il nome deve descrivere il workflow o il modulo logico rappresentato, seguito dal tipo di diagramma;
-  - esempio: `timeline_notifications_er.mmd`.
+  - il nome deve descrivere il workflow o il modulo logico rappresentato, seguito dal **tipo di diagramma**;
+  - esempio: `notifications_timeline_er.mmd`.
 
 - **Immagini esportate (PNG o SVG)**:
-  - utilizzare lo stesso nome del file `.mmd`, aggiungendo data di esportazione e versione;
-  - esempio: `timeline_notifications_er_10_03_2026_v1.png`.
+  - utilizzare lo stesso nome del file Mermaid
+  - esempio: `notifications_timeline_er.png`.
 
 Questa convenzione rende più semplice individuare, aggiornare e confrontare i diagrammi nel tempo.
 

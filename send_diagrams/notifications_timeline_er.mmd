@@ -40,7 +40,7 @@ erDiagram
         array recipients
     }
 
-    NOTIFICATIONS_REQUEST_UNIQUENESS {
+    NOTIFICATIONS_REQUEST {
         string requestId PK
     }
 
@@ -58,4 +58,4 @@ erDiagram
     }
 
     NOTIFICATIONS ||--o{ TIMELINE : "1:N"
-    NOTIFICATIONS_REQUEST_UNIQUENESS ||--|| NOTIFICATIONS : "1:1"
+    NOTIFICATIONS_REQUEST ||--|| NOTIFICATIONS : "1:1"
