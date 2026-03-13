@@ -36,8 +36,8 @@ Per favorire ordine e tracciabilità, adottare le seguenti convenzioni:
   - esempio: `notifications_timeline_er.mmd`.
 
 - **Immagini esportate (PNG o SVG)**:
-  - utilizzare lo stesso nome del file Mermaid
-  - esempio: `notifications_timeline_er.png`.
+  - utilizzare lo stesso nome del file Mermaid, dalla data e una versione;
+  - esempio: `notifications_timeline_er_13_03_26_v1.png`.
 
 Questa convenzione rende più semplice individuare, aggiornare e confrontare i diagrammi nel tempo.
 
