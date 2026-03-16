@@ -1,8 +1,8 @@
 %%{init: {
   "theme": "base",
   "themeVariables": {
-    "labelBackgroundColor": "#0B3D91",
-    "labelTextColor": "#FFFFFF",
+    "labelBackgroundColor": "#FFFFFF",
+    "labelTextColor": "#000000",
     "entityBkgColor": "#FFFFFF",
     "attributeBkgColor": "#FFFFFF",
     "background": "#FFFFFF"
@@ -19,6 +19,7 @@ erDiagram
         string group
         string idempotenceToken
         string abstract
+        array languages
         string notificationFeePolicy
         string pagoPaIntMode
         string paNotificationId
@@ -40,8 +41,9 @@ erDiagram
         array recipients
     }
 
-    NOTIFICATIONS_REQUEST_UNIQUENESS {
-        string requestId PK
+    NOTIFICATIONS_REQUEST {
+        string iun PK "senderPaId##paNotificationId##idempotenceToken"
+        string requestId
     }
 
     TIMELINE {
@@ -58,4 +60,8 @@ erDiagram
     }
 
     NOTIFICATIONS ||--o{ TIMELINE : "1:N"
-    NOTIFICATIONS_REQUEST_UNIQUENESS ||--|| NOTIFICATIONS : "1:1"
+    NOTIFICATIONS_REQUEST ||--|| NOTIFICATIONS : "1:1"
+
+    style NOTIFICATIONS fill:#FFFFFF,stroke:#000000,color:#000000
+    style NOTIFICATIONS_REQUEST fill:#FFFFFF,stroke:#000000,color:#000000
+    style TIMELINE fill:#FFFFFF,stroke:#000000,color:#000000
