@@ -1,0 +1,7 @@
+# .gitignore per data-discovery
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv

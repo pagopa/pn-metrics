@@ -1,0 +1,21 @@
+org: pagopa
+patterns:
+  dao_patterns:
+    - "*DaoDynamo.java"
+    - "*DAOImpl.java"
+  entity_folder_patterns:
+    - "entity"
+    - "entities"
+  table_regex: "([\\w\\.-]+(?:table-name|tablename|table|tablev2))=(\\w[\\w-]*)"
+repos:
+  pn-delivery:
+    path: src\main\java\it\pagopa\pn\delivery\middleware\notificationdao
+  
+    properties_path: config\application.properties
+    branch: main
+  pn-delivery-push:
+    path: src/main/java/it/pagopa/pn/deliverypush/middleware/dao
+    properties_path: config/application.properties
+  pn-radd-alt:
+    path: src\main\java\it\pagopa\pn\radd\middleware\db
+    properties_path: config\application.properties

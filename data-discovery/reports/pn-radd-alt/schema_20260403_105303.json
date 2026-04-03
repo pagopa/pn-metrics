@@ -1,0 +1,471 @@
+{
+  "metadata": {
+    "repository": "pn-radd-alt",
+    "branch": "main",
+    "commit": "d37bc40dcdc137dba0d1d99e78f6cf5cfae8f789",
+    "timestamp": "20260403_105303",
+    "tables_count": 6,
+    "entities_count": 11
+  },
+  "tables": {
+    "pn-radd-transaction-alt": {
+      "config_key": "pn.radd.dao.raddtransactiontable",
+      "file_path": null,
+      "entities": []
+    },
+    "pn-RaddRegistryImport": {
+      "config_key": "pn.radd.dao.raddregistryimporttable",
+      "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/impl/RaddRegistryImportDAOImpl.java",
+      "entities": [
+        {
+          "name": "RaddRegistryImportEntity",
+          "attributes": {
+            "cxId": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbPartitionKey"
+              ]
+            },
+            "requestId": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbSortKey"
+              ]
+            },
+            "fileKey": {
+              "type": "String"
+            },
+            "checksum": {
+              "type": "String"
+            },
+            "status": {
+              "type": "String"
+            },
+            "error": {
+              "type": "String"
+            },
+            "config": {
+              "type": "String"
+            },
+            "ttl": {
+              "type": "Long"
+            },
+            "createdAt": {
+              "type": "Instant"
+            },
+            "updatedAt": {
+              "type": "Instant"
+            },
+            "fileUploadDueDate": {
+              "type": "Instant"
+            },
+            "uid": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/entities/RaddRegistryImportEntity.java"
+        }
+      ]
+    },
+    "pn-RaddRegistryRequest": {
+      "config_key": "pn.radd.dao.raddregistryrequesttable",
+      "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/impl/RaddRegistryRequestDAOImpl.java",
+      "entities": [
+        {
+          "name": "RaddRegistryRequestEntity",
+          "attributes": {
+            "pk": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbPartitionKey"
+              ]
+            },
+            "requestId": {
+              "type": "String"
+            },
+            "correlationId": {
+              "type": "String"
+            },
+            "createdAt": {
+              "type": "Instant"
+            },
+            "updatedAt": {
+              "type": "Instant"
+            },
+            "originalRequest": {
+              "type": "String"
+            },
+            "zipCode": {
+              "type": "String"
+            },
+            "status": {
+              "type": "String"
+            },
+            "error": {
+              "type": "String"
+            },
+            "cxId": {
+              "type": "String"
+            },
+            "registryId": {
+              "type": "String"
+            },
+            "uid": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/entities/RaddRegistryRequestEntity.java"
+        }
+      ]
+    },
+    "pn-RaddRegistry": {
+      "config_key": "pn.radd.dao.raddregistrytable",
+      "file_path": null,
+      "entities": []
+    },
+    "pn-RaddRegistryV2": {
+      "config_key": "pn.radd.dao.raddregistrytablev2",
+      "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/impl/RaddRegistryV2DAOImpl.java",
+      "entities": [
+        {
+          "name": "RaddRegistryEntityV2",
+          "attributes": {
+            "partnerId": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbPartitionKey"
+              ]
+            },
+            "locationId": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbSortKey"
+              ]
+            },
+            "externalCodes": {
+              "type": "List<String>"
+            },
+            "phoneNumbers": {
+              "type": "List<String>"
+            },
+            "email": {
+              "type": "String"
+            },
+            "appointmentRequired": {
+              "type": "Boolean"
+            },
+            "website": {
+              "type": "String"
+            },
+            "partnerType": {
+              "type": "String"
+            },
+            "creationTimestamp": {
+              "type": "Instant"
+            },
+            "updateTimestamp": {
+              "type": "Instant"
+            },
+            "address": {
+              "type": "AddressEntity"
+            },
+            "normalizedAddress": {
+              "type": "NormalizedAddressEntityV2"
+            },
+            "modifiedAddress": {
+              "type": "Boolean"
+            },
+            "description": {
+              "type": "String"
+            },
+            "openingTime": {
+              "type": "String"
+            },
+            "startValidity": {
+              "type": "Instant"
+            },
+            "endValidity": {
+              "type": "Instant"
+            },
+            "uid": {
+              "type": "String"
+            },
+            "requestId": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/entities/RaddRegistryEntityV2.java"
+        },
+        {
+          "name": "AddressEntity",
+          "attributes": {
+            "addressRow": {
+              "type": "String"
+            },
+            "cap": {
+              "type": "String"
+            },
+            "city": {
+              "type": "String"
+            },
+            "province": {
+              "type": "String"
+            },
+            "country": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/entities/AddressEntity.java"
+        },
+        {
+          "name": "NormalizedAddressEntityV2",
+          "attributes": {
+            "latitude": {
+              "type": "String"
+            },
+            "longitude": {
+              "type": "String"
+            },
+            "biasPoint": {
+              "type": "BiasPointEntity"
+            },
+            "manualCoordinates": {
+              "type": "boolean"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/entities/NormalizedAddressEntityV2.java"
+        },
+        {
+          "name": "BiasPointEntity",
+          "attributes": {
+            "addressNumber": {
+              "type": "BigDecimal"
+            },
+            "country": {
+              "type": "BigDecimal"
+            },
+            "locality": {
+              "type": "BigDecimal"
+            },
+            "postalCode": {
+              "type": "BigDecimal"
+            },
+            "subRegion": {
+              "type": "BigDecimal"
+            },
+            "overall": {
+              "type": "BigDecimal"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/entities/BiasPointEntity.java"
+        },
+        {
+          "name": "RaddRegistryEntity",
+          "attributes": {
+            "registryId": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbPartitionKey"
+              ]
+            },
+            "cxId": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbSortKey"
+              ]
+            },
+            "externalCode": {
+              "type": "String"
+            },
+            "requestId": {
+              "type": "String"
+            },
+            "normalizedAddress": {
+              "type": "NormalizedAddressEntity"
+            },
+            "description": {
+              "type": "String"
+            },
+            "phoneNumber": {
+              "type": "String"
+            },
+            "geoLocation": {
+              "type": "String"
+            },
+            "zipCode": {
+              "type": "String"
+            },
+            "openingTime": {
+              "type": "String"
+            },
+            "startValidity": {
+              "type": "Instant"
+            },
+            "endValidity": {
+              "type": "Instant"
+            },
+            "capacity": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/entities/RaddRegistryEntity.java"
+        },
+        {
+          "name": "NormalizedAddressEntity",
+          "attributes": {
+            "addressRow": {
+              "type": "String"
+            },
+            "cap": {
+              "type": "String"
+            },
+            "city": {
+              "type": "String"
+            },
+            "pr": {
+              "type": "String"
+            },
+            "country": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/entities/NormalizedAddressEntity.java"
+        }
+      ]
+    },
+    "pn-RaddCoverage": {
+      "config_key": "pn.radd.dao.raddcoveragetable",
+      "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/impl/CoverageDAOImpl.java",
+      "entities": [
+        {
+          "name": "CoverageEntity",
+          "attributes": {
+            "uid": {
+              "type": "String"
+            },
+            "creationTimestamp": {
+              "type": "Instant"
+            },
+            "updateTimestamp": {
+              "type": "Instant"
+            },
+            "cap": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbPartitionKey"
+              ]
+            },
+            "locality": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbSortKey"
+              ]
+            },
+            "province": {
+              "type": "String"
+            },
+            "cadastralCode": {
+              "type": "String"
+            },
+            "startValidity": {
+              "type": "LocalDate"
+            },
+            "endValidity": {
+              "type": "LocalDate"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/entities/CoverageEntity.java"
+        }
+      ]
+    }
+  },
+  "orphan_entities": [
+    {
+      "name": "OperationsIunsEntity",
+      "attributes": {
+        "transactionId": {
+          "type": "String",
+          "annotations": [
+            "DynamoDbPartitionKey"
+          ]
+        },
+        "iun": {
+          "type": "String",
+          "annotations": [
+            "DynamoDbSortKey"
+          ]
+        }
+      },
+      "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/entities/OperationsIunsEntity.java"
+    },
+    {
+      "name": "RaddTransactionEntity",
+      "attributes": {
+        "transactionId": {
+          "type": "String",
+          "annotations": [
+            "DynamoDbPartitionKey"
+          ]
+        },
+        "operationType": {
+          "type": "String",
+          "annotations": [
+            "DynamoDbSortKey"
+          ]
+        },
+        "operationId": {
+          "type": "String"
+        },
+        "iun": {
+          "type": "String"
+        },
+        "fileKey": {
+          "type": "String"
+        },
+        "checksum": {
+          "type": "String"
+        },
+        "status": {
+          "type": "String"
+        },
+        "qrCode": {
+          "type": "String"
+        },
+        "recipientId": {
+          "type": "String"
+        },
+        "recipientType": {
+          "type": "String"
+        },
+        "delegateId": {
+          "type": "String"
+        },
+        "uid": {
+          "type": "String"
+        },
+        "operationStartDate": {
+          "type": "String"
+        },
+        "operationEndDate": {
+          "type": "String"
+        },
+        "versionToken": {
+          "type": "String"
+        },
+        "errorReason": {
+          "type": "String"
+        },
+        "creationTimestamp": {
+          "type": "Instant"
+        },
+        "updateTimestamp": {
+          "type": "Instant"
+        },
+        "senderPaIds": {
+          "type": "Set<String>"
+        }
+      },
+      "file_path": "src/main/java/it/pagopa/pn/radd/middleware/db/entities/RaddTransactionEntity.java"
+    }
+  ]
+}

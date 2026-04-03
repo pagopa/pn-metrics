@@ -1,0 +1,619 @@
+{
+  "metadata": {
+    "repository": "pn-delivery",
+    "branch": "main",
+    "commit": "2fc05bba93a2227bf3704657403ad1ba9c794789",
+    "timestamp": "20260403_105247",
+    "tables_count": 8,
+    "entities_count": 19
+  },
+  "tables": {
+    "Notifications": {
+      "config_key": "pn.delivery.notification-dao.table-name",
+      "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/NotificationEntityDaoDynamo.java",
+      "entities": [
+        {
+          "name": "NotificationCostEntity",
+          "attributes": {
+            "creditorTaxIdNoticeCode": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbPartitionKey"
+              ]
+            },
+            "iun": {
+              "type": "String"
+            },
+            "recipientIdx": {
+              "type": "int"
+            },
+            "recipientType": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/NotificationCostEntity.java"
+        },
+        {
+          "name": "NotificationQREntity",
+          "attributes": {
+            "aarQRCodeValue": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbPartitionKey"
+              ]
+            },
+            "iun": {
+              "type": "String"
+            },
+            "recipientType": {
+              "type": "RecipientTypeEntity"
+            },
+            "recipientId": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/NotificationQREntity.java"
+        },
+        {
+          "name": "NotificationRecipientEntity",
+          "attributes": {
+            "recipientType": {
+              "type": "RecipientTypeEntity"
+            },
+            "recipientId": {
+              "type": "String"
+            },
+            "denomination": {
+              "type": "String"
+            },
+            "digitalDomicile": {
+              "type": "NotificationDigitalAddressEntity"
+            },
+            "physicalAddress": {
+              "type": "NotificationPhysicalAddressEntity"
+            },
+            "payments": {
+              "type": "List<NotificationPaymentInfoEntity>"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/NotificationRecipientEntity.java"
+        },
+        {
+          "name": "NotificationDigitalAddressEntity",
+          "attributes": {
+            "type": {
+              "type": "DigitalAddressTypeEntity"
+            },
+            "address": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/NotificationDigitalAddressEntity.java"
+        },
+        {
+          "name": "NotificationPhysicalAddressEntity",
+          "attributes": {
+            "at": {
+              "type": "String"
+            },
+            "address": {
+              "type": "String"
+            },
+            "addressDetails": {
+              "type": "String"
+            },
+            "zip": {
+              "type": "String"
+            },
+            "municipality": {
+              "type": "String"
+            },
+            "municipalityDetails": {
+              "type": "String"
+            },
+            "province": {
+              "type": "String"
+            },
+            "foreignState": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/NotificationPhysicalAddressEntity.java"
+        },
+        {
+          "name": "NotificationPaymentInfoEntity",
+          "attributes": {
+            "noticeCode": {
+              "type": "String"
+            },
+            "creditorTaxId": {
+              "type": "String"
+            },
+            "applyCost": {
+              "type": "Boolean"
+            },
+            "pagoPaForm": {
+              "type": "PagoPaPaymentEntity"
+            },
+            "f24": {
+              "type": "F24PaymentEntity"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/NotificationPaymentInfoEntity.java"
+        },
+        {
+          "name": "PagoPaPaymentEntity",
+          "attributes": {
+            "digests": {
+              "type": "NotificationAttachmentDigestsEntity"
+            },
+            "contentType": {
+              "type": "String"
+            },
+            "ref": {
+              "type": "NotificationAttachmentBodyRefEntity"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/PagoPaPaymentEntity.java"
+        },
+        {
+          "name": "NotificationAttachmentDigestsEntity",
+          "attributes": {
+            "sha256": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/NotificationAttachmentDigestsEntity.java"
+        },
+        {
+          "name": "NotificationAttachmentBodyRefEntity",
+          "attributes": {
+            "key": {
+              "type": "String"
+            },
+            "versionToken": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/NotificationAttachmentBodyRefEntity.java"
+        },
+        {
+          "name": "F24PaymentEntity",
+          "attributes": {
+            "title": {
+              "type": "String"
+            },
+            "applyCost": {
+              "type": "Boolean"
+            },
+            "metadataAttachment": {
+              "type": "MetadataAttachmentEntity"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/F24PaymentEntity.java"
+        },
+        {
+          "name": "MetadataAttachmentEntity",
+          "attributes": {
+            "digests": {
+              "type": "NotificationAttachmentDigestsEntity"
+            },
+            "contentType": {
+              "type": "String"
+            },
+            "ref": {
+              "type": "NotificationAttachmentBodyRefEntity"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/MetadataAttachmentEntity.java"
+        }
+      ]
+    },
+    "NotificationsMetadata": {
+      "config_key": "pn.delivery.notification-metadata-dao.table-name",
+      "file_path": null,
+      "entities": []
+    },
+    "NotificationDelegationMetadata": {
+      "config_key": "pn.delivery.notification-delegation-metadata-dao.table-name",
+      "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/NotificationDaoDynamo.java",
+      "entities": [
+        {
+          "name": "NotificationEntity",
+          "attributes": {
+            "iun": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbPartitionKey"
+              ]
+            },
+            "notificationAbstract": {
+              "type": "String"
+            },
+            "idempotenceToken": {
+              "type": "String"
+            },
+            "paNotificationId": {
+              "type": "String"
+            },
+            "subject": {
+              "type": "String"
+            },
+            "sentAt": {
+              "type": "Instant"
+            },
+            "cancelledIun": {
+              "type": "String"
+            },
+            "cancelledByIun": {
+              "type": "String"
+            },
+            "senderPaId": {
+              "type": "String"
+            },
+            "recipients": {
+              "type": "List<NotificationRecipientEntity>"
+            },
+            "documents": {
+              "type": "List<DocumentAttachmentEntity>"
+            },
+            "notificationFeePolicy": {
+              "type": "NotificationFeePolicy"
+            },
+            "group": {
+              "type": "String"
+            },
+            "senderDenomination": {
+              "type": "String"
+            },
+            "senderTaxId": {
+              "type": "String"
+            },
+            "amount": {
+              "type": "Integer"
+            },
+            "paymentExpirationDate": {
+              "type": "String"
+            },
+            "requestId": {
+              "type": "String"
+            },
+            "taxonomyCode": {
+              "type": "String"
+            },
+            "pagoPaIntMode": {
+              "type": "String"
+            },
+            "sourceChannel": {
+              "type": "String"
+            },
+            "sourceChannelDetails": {
+              "type": "String"
+            },
+            "version": {
+              "type": "String"
+            },
+            "paFee": {
+              "type": "Integer"
+            },
+            "vat": {
+              "type": "Integer"
+            },
+            "languages": {
+              "type": "List<NotificationLang>"
+            },
+            "usedServices": {
+              "type": "UsedServicesEntity"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/NotificationEntity.java"
+        },
+        {
+          "name": "UsedServicesEntity",
+          "attributes": {
+            "physicalAddressLookup": {
+              "type": "Boolean"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/UsedServicesEntity.java"
+        },
+        {
+          "name": "NotificationMetadataEntity",
+          "attributes": {
+            "iunRecipientId": {
+              "type": "String"
+            },
+            "sentAt": {
+              "type": "Instant"
+            },
+            "senderId": {
+              "type": "String"
+            },
+            "recipientId": {
+              "type": "String"
+            },
+            "recipientIds": {
+              "type": "List<String>"
+            },
+            "recipientOne": {
+              "type": "boolean"
+            },
+            "notificationGroup": {
+              "type": "String"
+            },
+            "notificationStatus": {
+              "type": "String"
+            },
+            "senderIdCreationMonth": {
+              "type": "String"
+            },
+            "recipientIdCreationMonth": {
+              "type": "String"
+            },
+            "senderIdRecipientId": {
+              "type": "String"
+            },
+            "rootSenderId": {
+              "type": "String"
+            },
+            "notificationStatusTimestamp": {
+              "type": "Instant"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/NotificationMetadataEntity.java"
+        },
+        {
+          "name": "NotificationDelegationMetadataEntity",
+          "attributes": {
+            "iunRecipientIdDelegateIdGroupId": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbPartitionKey"
+              ]
+            },
+            "sentAt": {
+              "type": "Instant",
+              "annotations": [
+                "DynamoDbSortKey"
+              ]
+            },
+            "notificationStatusTimestamp": {
+              "type": "Instant"
+            },
+            "delegateIdCreationMonth": {
+              "type": "String"
+            },
+            "delegateIdGroupIdCreationMonth": {
+              "type": "String"
+            },
+            "mandateId": {
+              "type": "String"
+            },
+            "senderId": {
+              "type": "String"
+            },
+            "recipientId": {
+              "type": "String"
+            },
+            "recipientIds": {
+              "type": "List<String>"
+            },
+            "notificationStatus": {
+              "type": "String"
+            },
+            "senderIdCreationMonth": {
+              "type": "String"
+            },
+            "recipientIdCreationMonth": {
+              "type": "String"
+            },
+            "senderIdRecipientId": {
+              "type": "String"
+            },
+            "rootSenderId": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/NotificationDelegationMetadataEntity.java"
+        }
+      ]
+    },
+    "NotificationsCost": {
+      "config_key": "pn.delivery.notification-cost-dao.table-name",
+      "file_path": null,
+      "entities": []
+    },
+    "NotificationsQR": {
+      "config_key": "pn.delivery.notification-qr-dao.table-name",
+      "file_path": null,
+      "entities": []
+    },
+    "TaxonomyCode": {
+      "config_key": "pn.delivery.taxonomy-code-dao.table-name",
+      "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/TaxonomyCodeDaoDynamo.java",
+      "entities": [
+        {
+          "name": "TaxonomyCodeEntity",
+          "attributes": {
+            "key": {
+              "type": "String"
+            },
+            "paId": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/TaxonomyCodeEntity.java"
+        }
+      ]
+    },
+    "PaNotificationLimit": {
+      "config_key": "pn.delivery.paNotificationLimit-dao.table-name",
+      "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/PaNotificationLimitDaoDynamo.java",
+      "entities": []
+    },
+    "NotificationRefusedVerification": {
+      "config_key": "pn.delivery.notificationRefusedVerification-dao.table-name",
+      "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/NotificationRefusedVerificationDaoDynamo.java",
+      "entities": [
+        {
+          "name": "NotificationRefusedVerificationEntity",
+          "attributes": {
+            "pk": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbPartitionKey"
+              ]
+            },
+            "ttl": {
+              "type": "Long"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/NotificationRefusedVerificationEntity.java"
+        }
+      ]
+    }
+  },
+  "orphan_entities": [
+    {
+      "name": "DocumentAttachmentEntity",
+      "attributes": {
+        "contentType": {
+          "type": "String"
+        },
+        "digests": {
+          "type": "NotificationAttachmentDigestsEntity"
+        },
+        "ref": {
+          "type": "NotificationAttachmentBodyRefEntity"
+        },
+        "title": {
+          "type": "String"
+        },
+        "requiresAck": {
+          "type": "Boolean"
+        },
+        "sendByMail": {
+          "type": "Boolean"
+        }
+      },
+      "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/DocumentAttachmentEntity.java"
+    },
+    {
+      "name": "PaNotificationLimitEntity",
+      "attributes": {
+        "pk": {
+          "type": "String",
+          "annotations": [
+            "DynamoDbPartitionKey"
+          ]
+        },
+        "paId": {
+          "type": "String"
+        },
+        "yearMonth": {
+          "type": "String"
+        },
+        "requestedLimit": {
+          "type": "Integer"
+        },
+        "residualLimit": {
+          "type": "Integer"
+        },
+        "dailyCounter01": {
+          "type": "Integer"
+        },
+        "dailyCounter02": {
+          "type": "Integer"
+        },
+        "dailyCounter03": {
+          "type": "Integer"
+        },
+        "dailyCounter04": {
+          "type": "Integer"
+        },
+        "dailyCounter05": {
+          "type": "Integer"
+        },
+        "dailyCounter06": {
+          "type": "Integer"
+        },
+        "dailyCounter07": {
+          "type": "Integer"
+        },
+        "dailyCounter08": {
+          "type": "Integer"
+        },
+        "dailyCounter09": {
+          "type": "Integer"
+        },
+        "dailyCounter10": {
+          "type": "Integer"
+        },
+        "dailyCounter11": {
+          "type": "Integer"
+        },
+        "dailyCounter12": {
+          "type": "Integer"
+        },
+        "dailyCounter13": {
+          "type": "Integer"
+        },
+        "dailyCounter14": {
+          "type": "Integer"
+        },
+        "dailyCounter15": {
+          "type": "Integer"
+        },
+        "dailyCounter16": {
+          "type": "Integer"
+        },
+        "dailyCounter17": {
+          "type": "Integer"
+        },
+        "dailyCounter18": {
+          "type": "Integer"
+        },
+        "dailyCounter19": {
+          "type": "Integer"
+        },
+        "dailyCounter20": {
+          "type": "Integer"
+        },
+        "dailyCounter21": {
+          "type": "Integer"
+        },
+        "dailyCounter22": {
+          "type": "Integer"
+        },
+        "dailyCounter23": {
+          "type": "Integer"
+        },
+        "dailyCounter24": {
+          "type": "Integer"
+        },
+        "dailyCounter25": {
+          "type": "Integer"
+        },
+        "dailyCounter26": {
+          "type": "Integer"
+        },
+        "dailyCounter27": {
+          "type": "Integer"
+        },
+        "dailyCounter28": {
+          "type": "Integer"
+        },
+        "dailyCounter29": {
+          "type": "Integer"
+        },
+        "dailyCounter30": {
+          "type": "Integer"
+        },
+        "dailyCounter31": {
+          "type": "Integer"
+        }
+      },
+      "file_path": "src/main/java/it/pagopa/pn/delivery/middleware/notificationdao/entities/PaNotificationLimitEntity.java"
+    }
+  ]
+}

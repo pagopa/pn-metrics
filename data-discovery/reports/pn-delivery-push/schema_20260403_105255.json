@@ -1,0 +1,155 @@
+{
+  "metadata": {
+    "repository": "pn-delivery-push",
+    "branch": "main",
+    "commit": "85819ec2e6bd3bb783d8f19288fa648a1b75cb45",
+    "timestamp": "20260403_105255",
+    "tables_count": 3,
+    "entities_count": 5
+  },
+  "tables": {
+    "PaperNotificationFailed": {
+      "config_key": "pn.delivery-push.failed-notification-dao.table-name",
+      "file_path": "src/main/java/it/pagopa/pn/deliverypush/middleware/dao/failednotificationdao/dynamo/PaperNotificationFailedDaoDynamo.java",
+      "entities": [
+        {
+          "name": "PaperNotificationFailedEntity",
+          "attributes": {
+            "recipientId": {
+              "type": "String"
+            },
+            "iun": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/deliverypush/middleware/dao/failednotificationdao/dynamo/entity/PaperNotificationFailedEntity.java"
+        }
+      ]
+    },
+    "DocumentCreationRequest": {
+      "config_key": "pn.delivery-push.document-creation-request-dao.table-name",
+      "file_path": "src/main/java/it/pagopa/pn/deliverypush/middleware/dao/documentcreationdao/dynamo/DocumentCreationRequestDaoDynamo.java",
+      "entities": [
+        {
+          "name": "DocumentCreationRequestEntity",
+          "attributes": {
+            "key": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbPartitionKey"
+              ]
+            },
+            "iun": {
+              "type": "String"
+            },
+            "recIndex": {
+              "type": "Integer"
+            },
+            "documentType": {
+              "type": "String"
+            },
+            "timelineId": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/deliverypush/middleware/dao/documentcreationdao/dynamo/entity/DocumentCreationRequestEntity.java"
+        }
+      ]
+    },
+    "NotificationReworks": {
+      "config_key": "pn.delivery-push.notification-reworks-dao.table-name",
+      "file_path": "src/main/java/it/pagopa/pn/deliverypush/middleware/dao/notificationreworkdao/dynamo/NotificationReworkDaoDynamo.java",
+      "entities": [
+        {
+          "name": "NotificationReworksEntity",
+          "attributes": {
+            "iun": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbPartitionKey"
+              ]
+            },
+            "reworkId": {
+              "type": "String",
+              "annotations": [
+                "DynamoDbSortKey"
+              ]
+            },
+            "invalidatedTimelineElementIds": {
+              "type": "List<String>"
+            },
+            "reason": {
+              "type": "String"
+            },
+            "idx": {
+              "type": "Integer"
+            },
+            "expectedStatusCodes": {
+              "type": "List<StatusCodeEntity>"
+            },
+            "receivedStatusCodes": {
+              "type": "List<StatusCodeEntity>"
+            },
+            "expectedDeliveryFailureCause": {
+              "type": "String"
+            },
+            "expectedFinalStatus": {
+              "type": "String"
+            },
+            "status": {
+              "type": "ReworkRequestStatus"
+            },
+            "errors": {
+              "type": "List<NotificationReworksErrorEntity>"
+            },
+            "createdAt": {
+              "type": "Instant"
+            },
+            "updatedAt": {
+              "type": "Instant"
+            },
+            "attemptId": {
+              "type": "String"
+            },
+            "pcRetry": {
+              "type": "String"
+            },
+            "recIndex": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/deliverypush/middleware/dao/notificationreworkdao/dynamo/entity/NotificationReworksEntity.java"
+        },
+        {
+          "name": "NotificationReworksErrorEntity",
+          "attributes": {
+            "cause": {
+              "type": "ReworkRequestErrorCause"
+            },
+            "description": {
+              "type": "String"
+            }
+          },
+          "file_path": "src/main/java/it/pagopa/pn/deliverypush/middleware/dao/notificationreworkdao/dynamo/entity/NotificationReworksErrorEntity.java"
+        }
+      ]
+    }
+  },
+  "orphan_entities": [
+    {
+      "name": "StatusCodeEntity",
+      "attributes": {
+        "statusCode": {
+          "type": "String"
+        },
+        "attachments": {
+          "type": "List<String>"
+        },
+        "statusTimestamp": {
+          "type": "Instant"
+        }
+      },
+      "file_path": "src/main/java/it/pagopa/pn/deliverypush/middleware/dao/notificationreworkdao/dynamo/entity/StatusCodeEntity.java"
+    }
+  ]
+}
