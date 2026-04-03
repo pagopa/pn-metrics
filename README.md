@@ -102,3 +102,121 @@ In alternativa, per esigenze rapide, è possibile acquisire uno screenshot dell'
 
 - **Documentazione Mermaid**: [mermaid.js.org](https://mermaid.js.org/)
 - **Esempi e playground**: [mermaid.live](https://mermaid.live)
+
+## Automazione della rilevazione delle modifiche nei modelli dati 
+Automazione per il monitoring continuo e l'audit dei data contract DynamoDB distribuiti su molteplici repository backend.
+
+### Contesto e Problema da Risolvere
+Il team metriche di SEND è responsabile della definizione, manutenzione ed evoluzione dei **Data Contract**. Attualmente, tuttavia, non è disponibile uno schema dati centralizzato che consenta una visione chiara, aggiornata e consistente della struttura delle tabelle presenti su DynamoDB.
+
+Lo stato attuale è caratterizzato da una forte distribuzione delle informazioni: i modelli dati sono definiti all’interno di molteplici repository backend, sotto forma di entity Java, senza un meccanismo strutturato che ne permetta l’estrazione, la normalizzazione e la consultazione centralizzata.
+
+In questo contesto, risulta complesso:
+
+* ottenere una visione unificata del modello dati complessivo
+* garantire l’allineamento tra implementazione backend e Data Contract
+* tracciare in modo efficace le evoluzioni delle strutture dati
+
+Considerata questa frammentazione, emerge la necessità di attingere direttamente al livello backend, per costruire un modello dati centralizzato, aggiornato automaticamente che sia di supporto per la gestione dei Data Contract.
+
+L’obiettivo è quindi progettare e implementare una pipeline automatizzata che abiliti la rilevazione (detection) delle modifiche ai modelli dati, monitorando i branch principali (main) dei repository backend e intercettando in modo sistematico ogni variazione strutturale rilevante.
+
+### Struttura della Repository
+
+Di seguito, la struttura della cartella `data-discovery` con una descrizione sintetica di ogni file.
+
+```
+data-discovery/
+├── main.py                        # Entry point: legge la config YAML e orchestra il processing per ogni repository configurato
+├── core.py                        # Cuore applicativo: associazione DAO-tabella, propagazione entity, costruzione schema, confronto diff e generazione changes
+├── github_utils.py                # Client GitHub REST: listing cartelle, download file Java/properties, lettura commit SHA, scan ricorsiva
+├── utils.py                       # Funzioni helper: parsing classi @DynamoDbBean, estrazione attributi/annotazioni, normalizzazione nomi per fuzzy matching
+├── proposta.md                    # Documento di progetto: obiettivi, flusso logico, mapping, output e limiti noti
+├── config/
+│   └── config.yaml                # Configurazione centralizzata: organizzazione GitHub, elenco repository target, pattern DAO/entity, regex tabelle DynamoDB
+```
+
+### Workflow Logico
+
+#### 1. Scaricamento e Scansione Sorgenti
+
+- **Input**: configurazione YAML (`config/config.yaml`) con organizzazione GitHub, path repository, branch e pattern di ricerca.
+- **Processo**: download ricorsivo tramite API GitHub dei file `.java` (DAO e entity) e file di configurazione (`application.properties`).
+- **Output**: collection di file Java e properties organizzati per repo.
+
+#### 2. Parsing e Analisi
+
+- **Estrazione tabelle DynamoDB**: ricerca tramite regex configurabile nei file `application.properties` (pattern: `[tablename|table-name|table|tablev2]=<nome_tabella>`).
+- **Parsing DAO**: analizzare file che corrispondono ai pattern DAO (es. `*DaoDynamo.java`, `*DAOImpl.java`) per estrarre:
+  - Nome file DAO
+  - Riferimenti a entity (tramite tipo usato, nomi come `*Entity`)
+  - Chiavi di configurazione per associare a tabelle specifiche
+- **Parsing entity**: identificare classi annotate con `@DynamoDbBean` e estrarre:
+  - Nome entity
+  - Attributi con tipo e annotazioni
+  - Chiavi primarie/secondarie (tramite `@DynamoDbPartitionKey`, `@DynamoDbSortKey`)
+  - Percorso file sorgente
+
+#### 3. Mapping Logico
+
+- **Associazione tabella-DAO** (in ordine di priorità):
+  1. Presenza della chiave di configurazione nel sorgente DAO (`@Value` o costanti)
+  2. Presence letterale del nome tabella nel DAO
+  3. Similarità fuzzy tra nome tabella e nome file DAO
+- **Associazione tabella-entity**: per ogni DAO identificato, collega entity effettivamente referenziate (ricorsivamente tramite composizione).
+- **Fallback per entity orfane**: matching fuzzy tra nome tabella e nome entity con chiavi DynamoDB.
+- **Gestione entity non associate**: elenca separatamente entity mai collegate a tabelle.
+
+#### 4. Generazione Output
+
+- **Snapshot JSON**: per ogni repo, file `schema_<timestamp>.json` contiene:
+  - Metadati (repo, branch, commit hash, timestamp)
+  - Tabelle con DAO associati, entity correlate e dettagli attributi
+  - Entity orfane
+- **Diff automatico**: se schema cambia, genera `changes_<timestamp>.txt` con:
+  - Attributi aggiunti, rimossi, modificati (con dettaglio tipo precedente/nuovo)
+  - Intestazione con repo, branch, timestamp corrente e precedente
+- **Persistenza**: file salvati in `data-discovery/reports/<repo>/`
+
+### Roadmap Copertura Repository
+
+Tracciamento dello stato di integrazione per ogni repository backend monitorato dalla pipeline.
+I pattern DAO e entity seguono le convenzioni globali definite in `config/config.yaml`.
+
+| Repository | Path DAO | Properties Path | Branch | Status |
+|---|---|---|---|---|
+| **pn-delivery** | `src/main/java/it/pagopa/pn/delivery/middleware/notificationdao` | `config/application.properties` | `main` | ✅ Integrato |
+| **pn-delivery-push** | `src/main/java/it/pagopa/pn/deliverypush/middleware/dao` | `config/application.properties` | `main` | ✅ Integrato |
+| **pn-radd-alt** | `src/main/java/it/pagopa/pn/radd/middleware/db` | `config/application.properties` | `main` | ✅ Integrato |
+| **pn-mandate** | — | — | `main` | ⏳ TODO |
+| **pn-user-attributes** | — | — | `main` | ⏳ TODO |
+
+> **Pattern DAO globali**: `*DaoDynamo.java`, `*DAOImpl.java`  
+> **Pattern cartelle entity**: `entity`, `entities`  
+> **Regex tabelle**: `([\\w\\.-]+(?:table-name|tablename|table|tablev2))=(\\w[\\w-]*)`
+
+### Prossimi Passi
+
+| Task | Descrizione | Status |
+|------|-------------|--------|
+| **Folder di test** | Creazione suite test unitari per discovery, parser, mapper e output_generator. Fixture con file Java mock e config YAML di prova. | ⏳ TODO |
+| **GitHub Actions** | Implementazione workflow automatico schedulato (daily/weekly) per eseguire discovery su repo configurati e commitare snapshot/diff in branch dedicato o notificare su Slack. | ⏳ TODO |
+| **Risoluzione edge-case** | Tuning fuzzy matching per convenzioni diverse (plurale/singolare, suffissi custom, camel case/underscore). Validazione con dataset reale da pn-delivery, pn-timeline-service. | ⏳ TODO |
+| **Notifiche integrate** | Aggiunta canale notifiche (Slack/email) per alert su schemi modificati, con logica di escalation e policy di review. | ⏳ TODO |
+| **Validazione schema-uso** | Confronto automatico tra schema estratto e utilizzo effettivo nei servizi applicativi (tramite static analysis). | ⏳ TODO |
+
+
+Tracciamento dello stato di integrazione per ogni repository backend monitorato dalla pipeline.
+I pattern DAO e entity seguono le convenzioni globali definite in `config/config.yaml`.
+
+| Repository | Path DAO | Properties Path | Branch | Status |
+|---|---|---|---|---|
+| **pn-delivery** | `src/main/java/it/pagopa/pn/delivery/middleware/notificationdao` | `config/application.properties` | `main` | ✅ Integrato |
+| **pn-delivery-push** | `src/main/java/it/pagopa/pn/deliverypush/middleware/dao` | `config/application.properties` | `main` | ✅ Integrato |
+| **pn-radd-alt** | `src/main/java/it/pagopa/pn/radd/middleware/db` | `config/application.properties` | `main` | ✅ Integrato |
+| **pn-mandate** | — | — | `main` | ⏳ TODO |
+| **pn-user-attributes** | — | — | `main` | ⏳ TODO |
+
+> **Pattern DAO globali**: `*DaoDynamo.java`, `*DAOImpl.java`  
+> **Pattern cartelle entity**: `entity`, `entities`  
+> **Regex tabelle**: `([\\w\\.-]+(?:table-name|tablename|table|tablev2))=(\\w[\\w-]*)`
