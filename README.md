@@ -131,7 +131,6 @@ data-discovery/
 ├── core.py                        # Cuore applicativo: associazione DAO-tabella, propagazione entity, costruzione schema, confronto diff e generazione changes
 ├── github_utils.py                # Client GitHub REST: listing cartelle, download file Java/properties, lettura commit SHA, scan ricorsiva
 ├── utils.py                       # Funzioni helper: parsing classi @DynamoDbBean, estrazione attributi/annotazioni, normalizzazione nomi per fuzzy matching
-├── proposta.md                    # Documento di progetto: obiettivi, flusso logico, mapping, output e limiti noti
 ├── config/
 │   └── config.yaml                # Configurazione centralizzata: organizzazione GitHub, elenco repository target, pattern DAO/entity, regex tabelle DynamoDB
 ```
