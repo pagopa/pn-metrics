@@ -5,7 +5,7 @@ WITH timeline_filtered AS (
         `timestamp` AS ts,
         category,
         statusinfo.actual AS status
-    FROM <schema>.<tl_events>
+    FROM <schema>.<s_tl_events>
     WHERE
         category = 'NOTIFICATION_RADD_RETRIEVED'
         OR statusinfo.actual IS NOT NULL
