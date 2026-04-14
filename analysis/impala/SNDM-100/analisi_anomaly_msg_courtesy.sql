@@ -1,3 +1,4 @@
+-- NOTE: Table references have been anonymized. Replace placeholders before execution.
 WITH relevant_events AS (
   SELECT
     iun,
@@ -5,7 +6,7 @@ WITH relevant_events AS (
     timelineelementid,
     CAST(SUBSTR(`timestamp`, 1, 10) AS DATE) AS day,
     `timestamp` AS ts_raw
-  FROM send.silver_timeline
+  FROM <schema>.<s_tl_events>
   WHERE category IN ('SEND_COURTESY_MESSAGE', 'SEND_ANALOG_DOMICILE')
     AND SUBSTR(notificationsentat, 1, 10) >= '2024-01-01'
 ),
@@ -32,7 +33,7 @@ gold_analytics AS (
     tms_courtesy_message_email,
     tms_courtesy_message_appio_sentmessage,
     recipients_size
-  FROM send.gold_notification_analytics
+  FROM <schema>.<g_ntf_analytics>
 ),
 
 enriched AS (
