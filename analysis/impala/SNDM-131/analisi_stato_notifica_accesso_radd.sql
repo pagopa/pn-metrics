@@ -1,11 +1,12 @@
+-- NOTE: Table references have been anonymized. Replace placeholders before execution.
 WITH timeline_filtered AS (
     SELECT
         iun,
         `timestamp` AS ts,
         category,
         statusinfo.actual AS status
-    FROM send.silver_timeline
-    WHERE 
+    FROM <schema>.<tl_events>
+    WHERE
         category = 'NOTIFICATION_RADD_RETRIEVED'
         OR statusinfo.actual IS NOT NULL
 ),
