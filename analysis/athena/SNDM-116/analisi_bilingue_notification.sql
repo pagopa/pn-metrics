@@ -51,6 +51,7 @@ ORDER BY numero_notifiche DESC, tipologia_aar;
 
 SELECT
   senderpaid AS ente,
+  senderDenomination AS denominazione_ente,
   element_at(
     filter(
       transform(languages, x -> x.lang),
@@ -66,5 +67,5 @@ WHERE iun IS NOT NULL
   AND cardinality(languages) = 2
   AND any_match(languages, x -> x.lang = 'IT')
   AND concat(p_year, '-', p_month, '-', p_day) <= CAST(date_add('day', -1, current_date) AS varchar)
-GROUP BY 1, 2
-ORDER BY numero_notifiche DESC, ente, altra_lingua;
+GROUP BY 1, 2, 3
+ORDER BY numero_notifiche DESC, ente, denominazione_ente, altra_lingua;
