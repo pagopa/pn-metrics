@@ -246,10 +246,10 @@ SELECT
   mismatch_reason
 FROM checks
 WHERE mismatch_reason IS NOT NULL
-AND NOT (
-  cap = '93015'
-  AND notification_created_ts >= TIMESTAMP '2026-02-01 00:00:00'
-  AND notification_created_ts <  TIMESTAMP '2026-03-01 00:00:00'
-)
---- LIMIT 100
---- Rimuovere i cap NISCEMI (White list)
+  AND NOT (
+    (iun = 'AXQY-WAPV-LTEZ-202602-R-1' AND recindex = '0' AND attempt = 0)
+    OR (iun = 'RYLQ-UHDY-VYLA-202602-N-1' AND recindex = '0' AND attempt = 0)
+    OR (iun = 'KYNM-LZEJ-LTDW-202602-V-1' AND recindex = '0' AND attempt = 0)
+    OR (iun = 'UZNZ-ELRA-HYWP-202602-U-1' AND recindex = '0' AND attempt = 0)
+    OR (iun = 'RVWX-MDTH-LHWX-202602-U-1' AND recindex = '0' AND attempt = 1)
+  );
