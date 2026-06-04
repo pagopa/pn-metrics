@@ -30,3 +30,37 @@ WHERE CAST(t.p_year || LPAD(t.p_month, 2, '0') || LPAD(t.p_day, 2, '0') AS integ
     'GJTR-XKGZ-QAQJ-202602-N-1'
   )
 ORDER BY t.iun, t.details_recindex, t."timestamp";
+
+-- Check if there are notifications sent to the specific cap with a delay of more than 30 minutes from their creation time 
+
+WITH analog_notifications AS (
+  SELECT
+    t.iun,
+    t.details_recindex AS recindex,
+    TRY_CAST(t.details_sentattemptmade AS integer) AS attempt,
+    TRY_CAST(t.details_numberofpages AS integer) AS pages,
+    t.details_physicaladdress_zip AS cap,
+    t.details_physicaladdress_foreignstate AS foreign_state,
+    from_iso8601_timestamp(t."timestamp") AS analog_send_ts,
+    from_iso8601_timestamp(t.notificationSentAt) AS notification_created_ts,
+    current_timestamp AS now_ts,
+    date_diff(
+      'minute',
+      from_iso8601_timestamp(t.notificationSentAt),
+      current_timestamp
+    ) AS minutes_from_notification_creation
+  FROM pn_timelines_json_view t
+  WHERE t.category = 'SEND_ANALOG_DOMICILE'
+    AND t.iun = 'UQPZ-YWUZ-DQLA-202605-L-1'
+    AND t.notificationSentAt IS NOT NULL
+    AND TRY_CAST(t.details_sentattemptmade AS integer) IN (0, 1)
+    AND CAST(t.p_year || LPAD(t.p_month, 2, '0') || LPAD(t.p_day, 2, '0') AS integer)
+        BETWEEN CAST(date_format(date_add('day', -1, current_date), '%Y%m%d') AS integer)
+            AND CAST(date_format(current_date, '%Y%m%d') AS integer)
+    AND from_iso8601_timestamp(t.notificationSentAt) <= current_timestamp - INTERVAL '30' MINUTE
+)
+
+SELECT *
+FROM analog_notifications
+ORDER BY notification_created_ts DESC
+LIMIT 50;
