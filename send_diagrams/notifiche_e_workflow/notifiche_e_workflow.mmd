@@ -1,3 +1,7 @@
+%% version: v1.1.0
+%% source: data-contract notifications + timeline
+%% note: flat model (no nested objects expansion)
+
 %%{init: {
   "theme": "base",
   "themeVariables": {
@@ -36,9 +40,11 @@ erDiagram
         int paFee
         int vat
         string version
+        int senderPriority
         object usedServices
         array documents
         array recipients
+        string requestId
     }
 
     NOTIFICATIONS_REQUEST {
@@ -57,6 +63,7 @@ erDiagram
         string paId
         object statusInfo
         timestamp timestamp
+        string reworkId
     }
 
     NOTIFICATIONS ||--o{ TIMELINE : "1:N"

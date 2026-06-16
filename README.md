@@ -2,103 +2,108 @@
 
 Questo repository raccoglie script, query e materiali di supporto per l'analisi e il monitoraggio del prodotto SEND.
 
-## Mermaid Diagrams – Quick Guide
+## Mermaid Diagrams – Linee guida essenziali
 
-Questa guida descrive in modo essenziale come creare, gestire ed esportare diagrammi Mermaid in Visual Studio Code tramite l'estensione Mermaid Preview.
+### Obiettivo
+Gestire diagrammi Mermaid versionati, coerenti con i data contract e facilmente tracciabili nel repository.
 
-### Workflow consigliato
+## Struttura repository
 
-Per mantenere i diagrammi ordinati, aggiornati e coerenti con il repository, si suggerisce il seguente flusso:
+I diagrammi sono organizzati per dominio funzionale nella folder **send_diagrams**.
 
-1. **Scrittura e manutenzione**: salvare i diagrammi come file `.mmd` direttamente nel repository, così da versionarli insieme al codice.
-2. **Visualizzazione in sviluppo**: utilizzare Mermaid Preview per controllare il risultato grafico durante la modifica.
-3. **Esportazione**: generare PNG o SVG solo quando necessario per documentazione esterna o presentazioni.
+**Esempio struttura repository**
+```
+send_diagrams/
+└── notifiche_e_workflow/
+    ├── notifiche_e_workflow.mmd
+    ├── notifiche_e_workflow_13_03_26_v1.0.0.png
+    └── notifiche_e_workflow_16_06_26_v1.1.0.png
+```
 
-Questo approccio semplifica la manutenzione e garantisce l'allineamento tra documentazione e contenuti versionati.
+## Principi progettuali
+- Il file `.mmd` è la sorgente unica
+- Le immagini sono snapshot versionati
+- Tutti i file relativi allo stesso diagramma stanno nella stessa cartella
+- Nessuna espansione di oggetti complessi
 
-### Prerequisiti
+## Workflow
 
-Prima di procedere, verificare di disporre di:
+1. Creare file `.mmd`
+2. Verifica tramite preview
+3. Export e aggiornamento del diagramma
 
-- **Visual Studio Code**: scaricabile da [code.visualstudio.com](https://code.visualstudio.com/).
-- **Estensione Mermaid Preview**:
-  - installazione tramite pannello Extensions (`Ctrl+Shift+X`) cercando “Mermaid Preview”;
-  - link diretto: https://marketplace.visualstudio.com/items?itemName=vstirbu.vscode-mermaid-preview;
-  - funzionalità principali: anteprima interattiva, esportazione e personalizzazione del tema.
-- **Posizione corretta nel repository**: salvare i file `.mmd` nella cartella più adatta al contenuto rappresentato.
+### Creazione
+1. Creare file `.mmd`
+2. Inserire sintassi Mermaid (es. ER, flowchart)
+3. Salvare nella cartella del repository
 
-### Convenzioni di naming
-
-Per favorire ordine e tracciabilità, adottare le seguenti convenzioni:
-
-- **File Mermaid (`.mmd`)**:
-  - il nome deve descrivere il workflow o il modulo logico rappresentato, seguito dal **tipo di diagramma**;
-  - esempio: `notifications_timeline_er.mmd`.
-
-- **Immagini esportate (PNG o SVG)**:
-  - utilizzare lo stesso nome del file Mermaid, dalla data e una versione;
-  - esempio: `notifications_timeline_er_13_03_26_v1.png`.
-
-Questa convenzione rende più semplice individuare, aggiornare e confrontare i diagrammi nel tempo.
-
-### Creazione di un file Mermaid
-
-Per creare un nuovo diagramma:
-
-1. creare un file con estensione `.mmd`, ad esempio `nuovo_diagramma.mmd`;
-2. inserire direttamente la sintassi Mermaid;
-3. scegliere il tipo di diagramma appropriato, ad esempio ER o flowchart;
-4. salvare il file nella cartella designata del repository.
-
-#### Esempio
-
-Di seguito un esempio minimale di diagramma ER:
-
+Esempio:
 ```
 erDiagram
     ENTITY_A {
         string id PK
         string name
-        timestamp createdAt
     }
     ENTITY_B {
         string id PK
         string entityAId FK
-        string description
     }
     ENTITY_A ||--o{ ENTITY_B : "has"
 ```
 
-Il diagramma rappresenta:
+### Visualizzazione (VS Code)
+- Aprire file `.mmd`
+- `Ctrl+Shift+P` → Mermaid Preview
+- Salvare per aggiornare
 
-- `ENTITY_A` come entità principale con chiave primaria `id`;
-- `ENTITY_B` come entità correlata tramite chiave esterna `entityAId`;
-- una relazione uno-a-molti tra `ENTITY_A` e `ENTITY_B`.
+### Esportazione
+- Export da preview (PNG/SVG)
+- Applicare naming standard
 
-### Visualizzazione in VS Code
+## Naming
 
-Per aprire l'anteprima del diagramma:
+### File sorgente
+```
+<dominio>.mmd
+```
+Esempio:
+```
+notifiche_e_workflow.mmd
+```
 
-1. aprire il file `.mmd` in VS Code;
-2. richiamare la Command Palette con `Ctrl+Shift+P`;
-3. selezionare il comando **Mermaid Preview: Diagram Preview**;
-4. aggiornare e salvare il file per vedere l'anteprima ricaricarsi automaticamente.
+### Immagini
+```
+<nome>_<DD_MM_YY>_v<X.Y.Z>.png
+```
+Esempio:
+```
+notifiche_e_workflow_16_06_26_v1.1.0.png
+```
 
-L'anteprima supporta anche operazioni di navigazione utili, come zoom e spostamento.
+## Versionamento
 
-Se la preview non è disponibile, verificare che l'estensione sia installata, attiva e che il file abbia estensione `.mmd`.
+Il diagramma va allineato ai rispettivi Data Contract secondo lo schema:
 
-### Esportazione come immagine
+```
+vMAJOR.MINOR.PATCH
+```
 
-Quando serve una versione statica del diagramma:
+| Tipo modifica   | Versione |
+|-----------------|----------|
+| Breaking change | MAJOR    |
+| Nuovi campi     | MINOR    |
+| Fix             | PATCH    |
 
-1. aprire l'anteprima;
-2. usare il comando di esportazione dell'estensione per salvare in PNG o SVG;
-3. rinominare il file secondo la convenzione definita.
+**Esempio**
 
-In alternativa, per esigenze rapide, è possibile acquisire uno screenshot dell'anteprima.
+- Versione iniziale: `notifiche_e_workflow_13_03_26_v1.0.0.png`
+- Aggiornamenti:
+  - aggiunta `senderPriority`
+  - aggiunta `reworkId`
+- Nuova versione: `notifiche_e_workflow_16_06_26_v1.1.0.png`
 
-### Risorse aggiuntive
+## Riferimenti
 
-- **Documentazione Mermaid**: [mermaid.js.org](https://mermaid.js.org/)
-- **Esempi e playground**: [mermaid.live](https://mermaid.live)
+- https://mermaid.js.org/
+- https://mermaid.live/
+
