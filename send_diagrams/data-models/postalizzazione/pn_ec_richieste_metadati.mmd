@@ -1,0 +1,110 @@
+%% version: v1.0.0
+%% source: data contract: dc-pn-EcRichiesteMetadati.yaml
+
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "labelBackgroundColor": "#FFFFFF",
+    "labelTextColor": "#000000",
+    "entityBkgColor": "#FFFFFF",
+    "attributeBkgColor": "#FFFFFF",
+    "background": "#FFFFFF"
+  }
+}}%%
+
+erDiagram
+    direction LR
+
+    PN_EC_RICHIESTE_METADATI {
+        string requestId PK
+        string clientRequestTimeStamp
+        object eventsList
+        object digitalRequestMetadata
+        object paperRequestMetadata
+        string lastUpdateTimestamp
+        string messageId
+        string requestHash
+        string requestTimestamp
+        string statusRequest
+        long version
+        string XPagopaExtchCxId
+    }
+
+    EVENTLIST {
+        object digProgrStatus
+        object paperProgrStatus
+        string insertTimestamp
+    }
+
+    DIGITAL_REQUEST_METADATA {
+        string channel
+        string correlationId
+        string eventType
+        string messageContentType
+        string tags
+    }
+
+    PAPER_REQUEST_METADATA {
+        string iun
+        string printType
+        string productType
+        string requestPaId
+        string vas
+    }
+
+    DIG_PROGR_STATUS {
+        string eventCode
+        string eventDetails
+        string eventTimestamp
+        object generatedMessage
+        string status
+    }
+
+    GENERATED_MESSAGE {
+        string id
+        string location
+        string system
+    }
+
+    PAPER_PROGR_STATUS {
+        array attachments
+        string clientRequestTimeStamp
+        string deliveryFailureCause
+        string iun
+        string productType
+        string registeredLetterCode
+        string status
+        string statusCode
+        string statusDateTime
+        string statusDescription
+        string courier
+    }
+
+    ATTACHMENT {
+        string date
+        string documentType
+        string id
+        string sha256
+        string uri
+    }
+
+    %% RELAZIONI
+    PN_EC_RICHIESTE_METADATI ||--o{ EVENTLIST : ""
+    PN_EC_RICHIESTE_METADATI ||--o| DIGITAL_REQUEST_METADATA : ""
+    PN_EC_RICHIESTE_METADATI ||--o| PAPER_REQUEST_METADATA : ""
+
+    EVENTLIST ||--o| DIG_PROGR_STATUS : ""
+    EVENTLIST ||--o| PAPER_PROGR_STATUS : ""
+
+    DIG_PROGR_STATUS ||--o| GENERATED_MESSAGE : ""
+    PAPER_PROGR_STATUS ||--o{ ATTACHMENT : ""
+
+    %% STYLE
+    style PN_EC_RICHIESTE_METADATI fill:#FFFFFF,stroke:#000000,color:#000000
+    style EVENTLIST fill:#FFFFFF,stroke:#000000,color:#000000
+    style DIGITAL_REQUEST_METADATA fill:#FFFFFF,stroke:#000000,color:#000000
+    style PAPER_REQUEST_METADATA fill:#FFFFFF,stroke:#000000,color:#000000
+    style DIG_PROGR_STATUS fill:#FFFFFF,stroke:#000000,color:#000000
+    style GENERATED_MESSAGE fill:#FFFFFF,stroke:#000000,color:#000000
+    style PAPER_PROGR_STATUS fill:#FFFFFF,stroke:#000000,color:#000000
+    style ATTACHMENT fill:#FFFFFF,stroke:#000000,color:#000000
