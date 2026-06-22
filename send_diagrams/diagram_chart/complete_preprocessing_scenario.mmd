@@ -1,0 +1,41 @@
+sequenceDiagram
+    autonumber
+
+    participant DDB as Amazon DynamoDB
+    participant FH as Amazon Data Firehose
+    participant L as AWS Lambda Processor
+    participant DQ as data-quality.yml
+    participant S3R as S3 Raw
+    participant S3C as S3 Clean
+    participant S3Q as S3 Quarantine
+    participant S3E as S3 Error
+    participant SNS as Amazon SNS
+    participant MAIL as Email Team Operativo
+    participant DOWN as RDS / Data Lake<br/>Fase successiva
+    participant CW as CloudWatch Logs / Metrics
+
+    DDB->>FH: Produce evento CDC JSON
+    FH->>L: Invoca Lambda processor
+    L->>DQ: Legge regole di quality check
+    DQ-->>L: Restituisce configurazione controlli
+    L->>L: Parsing record CDC + validazione
+
+    FH->>S3R: Scrive copia raw originale
+
+    alt Record valido
+        L-->>FH: dq_status = clean
+        FH->>S3C: Scrive record su prefisso clean
+        S3C-->>DOWN: Ingestion futura verso RDS / Data Lake
+    else Record non conforme
+        L-->>FH: dq_status = quarantine
+        FH->>S3Q: Scrive record su prefisso quarantine
+        S3Q->>SNS: S3 Event Notification - ObjectCreated
+        SNS->>MAIL: Invio alert email
+    else Errore tecnico
+        L-->>FH: result = ProcessingFailed
+        FH->>S3E: Scrive record su prefisso error
+        L->>CW: Log / metrica errore
+    end
+
+    Note over S3Q,MAIL: La quarantine è un esito funzionale dei quality check
+    Note over S3E,CW: Error rappresenta un problema tecnico di processing / delivery

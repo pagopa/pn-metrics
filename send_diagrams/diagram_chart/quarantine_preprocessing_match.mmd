@@ -1,0 +1,49 @@
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "background": "#ffffff",
+    "primaryColor": "#f7f7f7",
+    "primaryBorderColor": "#c9ced3",
+    "primaryTextColor": "#111111",
+    "lineColor": "#222222",
+    "secondaryColor": "#ffffff",
+    "tertiaryColor": "#ffffff",
+    "noteBkgColor": "#f8f8f8",
+    "noteBorderColor": "#d0d0d0",
+    "noteTextColor": "#111111",
+    "actorBorder": "#c9ced3",
+    "actorBkg": "#f7f7f7",
+    "actorTextColor": "#111111",
+    "activationBorderColor": "#999999",
+    "activationBkgColor": "#ffffff",
+    "sequenceNumberColor": "#444444",
+    "signalColor": "#222222",
+    "signalTextColor": "#111111",
+    "labelBoxBkgColor": "#ffffff",
+    "labelBoxBorderColor": "#ffffff"
+  }
+}}%%
+
+sequenceDiagram
+    participant DDB as Amazon DynamoDB
+    participant FH as Amazon Data Firehose
+    participant L as AWS Lambda Processor
+    participant DQ as data-quality.yml
+    participant S3R as S3 Raw
+    participant S3Q as S3 Quarantine
+    participant SNS as Amazon SNS
+    participant MAIL as Email Alert
+
+    DDB->>FH: CDC JSON event
+    FH->>L: Invoke Lambda processor
+    L->>DQ: Read DQ rules
+    DQ-->>L: Rules configuration
+    L->>L: Parse CDC + quality checks
+
+    FH->>S3R: Original copy → raw
+    L-->>FH: dq_status = quarantine
+    FH->>S3Q: Write quarantine prefix
+    S3Q->>SNS: ObjectCreated notification
+    SNS->>MAIL: Email alert
+
+    Note over S3Q,MAIL: Scenario quarantine: il record non supera i controlli. La mail contiene solo il riferimento all'oggetto S3, non il file.
