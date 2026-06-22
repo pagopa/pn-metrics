@@ -43,7 +43,7 @@ LIMIT 10;
 
 SELECT *
 FROM "cdc_analytics_database"."pn_notifications_json_view"
-WHERE iun = 'YEGZ-XNPZ-UETG-202506-W-1'
+--WHERE iun = ''
   AND CAST(
         CONCAT(
           CAST(p_year AS varchar), '-',
