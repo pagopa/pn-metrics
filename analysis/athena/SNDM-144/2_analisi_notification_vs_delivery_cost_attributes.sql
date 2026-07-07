@@ -44,6 +44,52 @@ notification_recipients AS (
     CROSS JOIN UNNEST(n.recipients) WITH ORDINALITY AS r(recipient, rec_ordinality)
 ),
 
+notification_cost_ranked AS (
+    SELECT
+        nc.iun,
+        TRY_CAST(nc.recipientIdx AS integer) AS recipientIdx,
+
+        COALESCE(
+            nc.creditorTaxId_noticeCode,
+            nc.dynamodb_keys_creditorTaxId_noticeCode
+        ) AS creditorTaxId_noticeCode,
+
+        nc.stream_eventname,
+        nc.kinesis_dynamodb_ApproximateCreationDateTime,
+
+        ROW_NUMBER() OVER (
+            PARTITION BY
+                COALESCE(
+                    nc.creditorTaxId_noticeCode,
+                    nc.dynamodb_keys_creditorTaxId_noticeCode
+                )
+            ORDER BY nc.kinesis_dynamodb_ApproximateCreationDateTime DESC
+        ) AS rn
+
+    FROM "cdc_analytics_database"."pn_notifications_cost_json_view" nc
+    CROSS JOIN params p
+    WHERE CAST(
+            CAST(nc.p_year AS varchar) ||
+            LPAD(CAST(nc.p_month AS varchar), 2, '0') ||
+            LPAD(CAST(nc.p_day AS varchar), 2, '0')
+          AS integer) BETWEEN p.start_partition_key AND p.max_partition_key
+      AND COALESCE(
+            nc.creditorTaxId_noticeCode,
+            nc.dynamodb_keys_creditorTaxId_noticeCode
+          ) IS NOT NULL
+),
+
+notification_cost_perimeter AS (
+    SELECT DISTINCT
+        iun,
+        recipientIdx
+    FROM notification_cost_ranked
+    WHERE rn = 1
+      AND stream_eventname IN ('INSERT', 'MODIFY')
+      AND iun IS NOT NULL
+      AND recipientIdx IS NOT NULL
+),
+
 delivery_cost_last_event AS (
     SELECT *
     FROM (
@@ -56,12 +102,9 @@ delivery_cost_last_event AS (
                 ORDER BY dc.kinesis_dynamodb_ApproximateCreationDateTime DESC
             ) AS rn
         FROM "cdc_analytics_database"."pn_notification_delivery_cost_json_view" dc
-        INNER JOIN (
-            SELECT DISTINCT iun, recIndex
-            FROM notification_recipients
-        ) nr
-            ON nr.iun = dc.dynamodb_keys_pk
-           AND nr.recIndex = TRY_CAST(dc.dynamodb_keys_sk AS integer)
+        INNER JOIN notification_cost_perimeter ncp
+            ON ncp.iun = dc.dynamodb_keys_pk
+           AND ncp.recipientIdx = TRY_CAST(dc.dynamodb_keys_sk AS integer)
         CROSS JOIN params p
         WHERE CAST(
                 CAST(dc.p_year AS varchar) ||
@@ -82,12 +125,9 @@ delivery_cost_latest AS (
                 ORDER BY dc.kinesis_dynamodb_ApproximateCreationDateTime DESC
             ) AS rn
         FROM "cdc_analytics_database"."pn_notification_delivery_cost_json_view" dc
-        INNER JOIN (
-            SELECT DISTINCT iun, recIndex
-            FROM notification_recipients
-        ) nr
-            ON nr.iun = dc.dynamodb_keys_pk
-           AND nr.recIndex = TRY_CAST(dc.dynamodb_keys_sk AS integer)
+        INNER JOIN notification_cost_perimeter ncp
+            ON ncp.iun = dc.dynamodb_keys_pk
+           AND ncp.recipientIdx = TRY_CAST(dc.dynamodb_keys_sk AS integer)
         CROSS JOIN params p
         WHERE CAST(
                 CAST(dc.p_year AS varchar) ||
@@ -162,6 +202,9 @@ check_detail AS (
             ELSE 9
         END AS check_order
     FROM notification_recipients nr
+    INNER JOIN notification_cost_perimeter ncp
+        ON ncp.iun = nr.iun
+       AND ncp.recipientIdx = nr.recIndex
     LEFT JOIN delivery_cost_last_event dc_last
         ON dc_last.dynamodb_keys_pk = nr.iun
        AND TRY_CAST(dc_last.dynamodb_keys_sk AS integer) = nr.recIndex
@@ -170,25 +213,6 @@ check_detail AS (
        AND TRY_CAST(dc.dynamodb_keys_sk AS integer) = nr.recIndex
     WHERE dc_last.dynamodb_keys_pk IS NOT NULL
 )
-
-/* GROUP completa 
-
-SELECT
-    check_result,
-    chiave_dc_trovato,
-    status_mismatch,
-    COUNT(*) AS num_record
-FROM check_detail
-WHERE check_result = 'KO'
-GROUP BY
-    check_result,
-    chiave_dc_trovato,
-    status_mismatch
-ORDER BY
-    num_record DESC;*/
-
-
-/* SELECT completa */
 
 SELECT 
     n_iun, 
@@ -215,8 +239,4 @@ SELECT
     chiave_dc_trovato,
     status_mismatch 
 FROM check_detail 
-WHERE check_result = 'KO'
-ORDER BY
-    check_order,
-    n_iun,
-    n_recIndex;
+WHERE check_result = 'KO';

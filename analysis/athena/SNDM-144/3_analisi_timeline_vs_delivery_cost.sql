@@ -139,8 +139,6 @@ check_detail AS (
         ON tf.iun = dc.dynamodb_keys_pk
 )
 
-/* SELECT COMPLETA 
-
 SELECT
     dc_iun,
     dc_recIndex,
@@ -156,31 +154,4 @@ SELECT
     check_result,
     status_mismatch
 FROM check_detail
-WHERE check_result = 'KO'
-ORDER BY
-    status_mismatch,
-    dc_iun,
-    dc_recIndex; */
-    
-    
-/* GROUP BY */
-
-
-SELECT
-    check_result,
-    status_mismatch,
-    evento_timeline_trovato,
-    chiave_dc_trovata,
-    dc_isDeleted,
-    COUNT(*) AS num_record
-FROM check_detail
-WHERE check_result='KO'
-GROUP BY
-    check_result,
-    status_mismatch,
-    evento_timeline_trovato,
-    chiave_dc_trovata,
-    dc_isDeleted
-ORDER BY
-    status_mismatch,
-    num_record DESC; 
+WHERE check_result = 'KO'; 

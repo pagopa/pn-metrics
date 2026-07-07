@@ -42,6 +42,53 @@ notification_recipients AS (
         WITH ORDINALITY AS r(recipient, rec_ordinality)
 ),
 
+notification_cost_ranked AS (
+    SELECT
+        nc.iun,
+        TRY_CAST(nc.recipientIdx AS integer) AS recipientIdx,
+
+        COALESCE(
+            nc.creditorTaxId_noticeCode,
+            nc.dynamodb_keys_creditorTaxId_noticeCode
+        ) AS creditorTaxId_noticeCode,
+
+        nc.stream_eventname,
+        nc.kinesis_dynamodb_ApproximateCreationDateTime,
+
+        ROW_NUMBER() OVER (
+            PARTITION BY
+                COALESCE(
+                    nc.creditorTaxId_noticeCode,
+                    nc.dynamodb_keys_creditorTaxId_noticeCode
+                )
+            ORDER BY nc.kinesis_dynamodb_ApproximateCreationDateTime DESC
+        ) AS rn
+
+    FROM "cdc_analytics_database"."pn_notifications_cost_json_view" nc
+    CROSS JOIN params p
+    WHERE CAST(
+            CAST(nc.p_year AS varchar) ||
+            LPAD(CAST(nc.p_month AS varchar), 2, '0') ||
+            LPAD(CAST(nc.p_day AS varchar), 2, '0')
+          AS integer) BETWEEN p.start_partition_key AND p.max_partition_key
+      AND COALESCE(
+            nc.creditorTaxId_noticeCode,
+            nc.dynamodb_keys_creditorTaxId_noticeCode
+          ) IS NOT NULL
+),
+
+notification_cost_perimeter AS (
+    SELECT DISTINCT
+        ncr.iun,
+        ncr.recipientIdx AS recIndex
+    FROM notification_cost_ranked ncr
+    INNER JOIN notification_recipients nr
+        ON nr.iun = ncr.iun
+       AND nr.recIndex = ncr.recipientIdx
+    WHERE ncr.rn = 1
+      AND ncr.stream_eventname IN ('INSERT', 'MODIFY')
+),
+
 timeline_events AS (
     SELECT
         t.iun,
@@ -57,13 +104,14 @@ timeline_events AS (
 
         TRY_CAST(t.details_analogCost AS integer) AS analogCost_value,
         TRY_CAST(t.details_notificationCost AS integer) AS notificationCost_value,
+        t.details_productType AS productType,
 
         t.timestamp
 
     FROM "cdc_analytics_database"."pn_timelines_json_view" t
-    INNER JOIN notification_recipients nr
-        ON nr.iun = t.iun
-       AND nr.recIndex = COALESCE(
+    INNER JOIN notification_cost_perimeter ncp
+        ON ncp.iun = t.iun
+       AND ncp.recIndex = COALESCE(
             TRY_CAST(t.details_recIndex AS integer),
             TRY_CAST(REGEXP_EXTRACT(t.timelineElementId, 'RECINDEX_([0-9]+)', 1) AS integer)
        )
@@ -88,6 +136,7 @@ timeline_cost_events AS (
         sentAttemptMade,
         analogCost_value,
         notificationCost_value,
+        productType,
         timestamp,
 
         CASE
@@ -146,8 +195,19 @@ timeline_cost_expected AS (
         MAX(CASE WHEN expected_cost_type = 'SIMPLE_REGISTERED_LETTER' THEN 1 ELSE 0 END)
             AS expected_simpleRegisteredLetterCost,
 
-        MAX(CASE WHEN expected_cost_type = 'SIMPLE_REGISTERED_LETTER' THEN notificationCost_value END)
-            AS expected_simpleRegisteredLetterCost_value,
+        MAX(
+            CASE
+                WHEN expected_cost_type = 'SIMPLE_REGISTERED_LETTER'
+                THEN COALESCE(notificationCost_value, analogCost_value)
+            END
+        ) AS expected_simpleRegisteredLetterCost_value,
+
+        MAX(
+            CASE
+                WHEN expected_cost_type = 'SIMPLE_REGISTERED_LETTER'
+                THEN productType
+            END
+        ) AS expected_simpleRegisteredLetterCost_productType,
 
         COUNT(*) AS timeline_event_count,
         MAX(timestamp) AS timeline_last_timestamp
@@ -158,7 +218,6 @@ timeline_cost_expected AS (
         iun,
         recIndex
 ),
-
 delivery_cost_ranked AS (
     SELECT
         dc.*,
@@ -171,9 +230,9 @@ delivery_cost_ranked AS (
         ) AS rn
 
     FROM "cdc_analytics_database"."pn_notification_delivery_cost_json_view" dc
-    INNER JOIN notification_recipients nr
-        ON nr.iun = dc.dynamodb_keys_pk
-       AND nr.recIndex = TRY_CAST(dc.dynamodb_keys_sk AS integer)
+    INNER JOIN notification_cost_perimeter ncp
+        ON ncp.iun = dc.dynamodb_keys_pk
+       AND ncp.recIndex = TRY_CAST(dc.dynamodb_keys_sk AS integer)
 
     CROSS JOIN params p
 
@@ -193,8 +252,8 @@ delivery_cost_latest AS (
 
 check_detail_status AS (
     SELECT
-        nr.iun,
-        nr.recIndex,
+        ncp.iun,
+        ncp.recIndex,
 
         COALESCE(tl.expected_firstAnalogCost, 0) AS expected_firstAnalogCost,
         tl.expected_firstAnalogCost_value,
@@ -207,7 +266,8 @@ check_detail_status AS (
 
         tl.timeline_event_count,
         tl.timeline_last_timestamp,
-
+        tl.expected_simpleRegisteredLetterCost_productType,
+        
         TRY_CAST(dc.baseCost_sendFee AS integer) AS baseCost_sendFee,
         TRY_CAST(dc.baseCost_paFee AS integer) AS baseCost_paFee,
 
@@ -275,34 +335,37 @@ check_detail_status AS (
              AND tl.expected_simpleRegisteredLetterCost_value <> TRY_CAST(dc.simpleRegisteredLetterCost_cost AS integer)
                 THEN 'SIMPLE_RL_COST_VALUE_MISMATCH'
 
-            WHEN COALESCE(tl.expected_simpleRegisteredLetterCost, 0) = 1
+            WHEN tl.expected_simpleRegisteredLetterCost_productType IS NOT NULL
              AND dc.simpleRegisteredLetterCost_productType IS NOT NULL
-             AND dc.simpleRegisteredLetterCost_productType <> 'SEND_SIMPLE_REGISTERED_LETTER'
+             AND dc.simpleRegisteredLetterCost_productType <> tl.expected_simpleRegisteredLetterCost_productType
                 THEN 'SIMPLE_RL_PRODUCT_TYPE_MISMATCH'
 
             ELSE 'NO_MISMATCH'
         END AS status_mismatch
 
-    FROM notification_recipients nr
+    FROM notification_cost_perimeter ncp
 
     LEFT JOIN timeline_cost_expected tl
-        ON tl.iun = nr.iun
-       AND tl.recIndex = nr.recIndex
+        ON tl.iun = ncp.iun
+       AND tl.recIndex = ncp.recIndex
 
     LEFT JOIN delivery_cost_latest dc
-        ON dc.dynamodb_keys_pk = nr.iun
-       AND TRY_CAST(dc.dynamodb_keys_sk AS integer) = nr.recIndex
+        ON dc.dynamodb_keys_pk = ncp.iun
+       AND TRY_CAST(dc.dynamodb_keys_sk AS integer) = ncp.recIndex
 ),
 
 check_detail AS (
     SELECT
         *,
-
         CASE
+            WHEN status_mismatch IN (
+                'FIRST_ANALOG_PRODUCT_TYPE_MISSING',
+                'SECOND_ANALOG_PRODUCT_TYPE_MISSING'
+            ) THEN 'DA_VERIFICARE'
+        
             WHEN status_mismatch <> 'NO_MISMATCH' THEN 'KO'
             ELSE 'OK'
         END AS check_result,
-
         CASE
             WHEN status_mismatch = 'DELIVERY_COST_MISSING' THEN 1
             WHEN status_mismatch = 'BASE_SEND_FEE_MISSING' THEN 2
@@ -322,28 +385,6 @@ check_detail AS (
 
     FROM check_detail_status
 )
-
-/* GROUP BY
-
-SELECT
-    check_result,
-    status_mismatch,
-    COUNT(
-        DISTINCT CONCAT(
-            iun,
-            '##',
-            CAST(recIndex AS varchar)
-        )
-    ) AS num_record
-FROM check_detail
-WHERE check_result = 'KO'
-GROUP BY
-    check_result,
-    status_mismatch
-ORDER BY
-    MIN(check_order),
-    num_record DESC;
-*/
 
 
 /* SELECT COMPLETA */
@@ -382,8 +423,4 @@ SELECT
     check_result,
     status_mismatch
 FROM check_detail
-WHERE check_result = 'KO'
-ORDER BY
-    check_order,
-    iun,
-    recIndex;
+WHERE check_result = 'KO' or check_result='DA_VERIFICARE';
