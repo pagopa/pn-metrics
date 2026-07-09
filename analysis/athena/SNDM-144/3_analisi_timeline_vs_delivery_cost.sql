@@ -1,8 +1,8 @@
-WITH params AS (
+WITH date_analysis AS (
     SELECT
-        CAST(date_format(date_add('day', -10, current_date), '%Y%m%d') AS integer) AS start_partition_key,
+        CAST(date_format(date_add('day', -7, current_date), '%Y%m%d') AS integer) AS start_partition_key,
         CAST(date_format(date_add('day', -1, current_date), '%Y%m%d') AS integer) AS max_partition_key,
-        date_add('day', -10, current_date) AS start_sent_date,
+        date_add('day', -7, current_date) AS start_sent_date,
         date_add('day', -1, current_date) AS end_sent_date
 ),
 
@@ -10,7 +10,7 @@ notification_perimeter AS (
     SELECT DISTINCT
         n.iun
     FROM "cdc_analytics_database"."pn_notifications_json_view" n
-    CROSS JOIN params df
+    CROSS JOIN date_analysis df
     WHERE CAST(
             CAST(n.p_year AS varchar) ||
             LPAD(CAST(n.p_month AS varchar), 2, '0') ||
@@ -48,7 +48,7 @@ timeline_flags AS (
     FROM "cdc_analytics_database"."pn_timelines_json_view" t
     INNER JOIN notification_perimeter np
         ON np.iun = t.iun
-    CROSS JOIN params df
+    CROSS JOIN date_analysis df
     WHERE CAST(
             CAST(t.p_year AS varchar) ||
             LPAD(CAST(t.p_month AS varchar), 2, '0') ||
@@ -73,7 +73,7 @@ delivery_cost_latest AS (
         FROM "cdc_analytics_database"."pn_notification_delivery_cost_json_view" dc
         INNER JOIN notification_perimeter np
             ON np.iun = dc.dynamodb_keys_pk
-        CROSS JOIN params df
+        CROSS JOIN date_analysis df
         WHERE CAST(
                 CAST(dc.p_year AS varchar) ||
                 LPAD(CAST(dc.p_month AS varchar), 2, '0') ||
@@ -143,13 +143,11 @@ SELECT
     dc_iun,
     dc_recIndex,
     dc_isDeleted,
-
     tl_iun,
     evento_timeline_trovato,
     has_refused_or_cancelled,
     tl_refused_cancelled_event_count,
     tl_last_refused_cancelled_timestamp,
-
     chiave_dc_trovata,
     check_result,
     status_mismatch

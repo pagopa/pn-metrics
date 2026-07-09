@@ -1,9 +1,9 @@
-WITH params AS (
+WITH date_analysis AS (
     SELECT
-        CAST(date_format(date_add('day', -10, current_date), '%Y%m%d') AS integer) AS start_partition_key,
+        CAST(date_format(date_add('day', -7, current_date), '%Y%m%d') AS integer) AS start_partition_key,
         CAST(date_format(date_add('day', -1, current_date), '%Y%m%d') AS integer) AS max_partition_key,
-        date_add('day', -10, current_date) AS start_sent_date,
-        date_add('day', -1, current_date) AS end_sent_date
+        date_add('day', -1, current_date) AS start_sent_date,
+        date_add('day', -7, current_date) AS end_sent_date
 ),
 
 notification_cost_ranked AS (
@@ -49,7 +49,7 @@ notification_cost_ranked AS (
         ) AS rn
 
     FROM "cdc_analytics_database"."pn_notifications_cost_json_view" nc
-    CROSS JOIN params p
+    CROSS JOIN date_analysis p
     WHERE CAST(
             CAST(nc.p_year AS varchar) ||
             LPAD(CAST(nc.p_month AS varchar), 2, '0') ||
@@ -78,7 +78,7 @@ notification_perimeter AS (
     SELECT DISTINCT
         n.iun
     FROM "cdc_analytics_database"."pn_notifications_json_view" n
-    CROSS JOIN params p
+    CROSS JOIN date_analysis p
     INNER JOIN notification_cost_perimeter nc
         ON nc.iun = n.iun
     WHERE CAST(
@@ -110,7 +110,7 @@ payment_info_ranked AS (
         FROM notification_cost_perimeter
     ) nc
         ON nc.creditorTaxId_noticeCode = p.dynamodb_keys_pk
-    CROSS JOIN params par
+    CROSS JOIN date_analysis par
     WHERE CAST(
             CAST(p.p_year AS varchar) ||
             LPAD(CAST(p.p_month AS varchar), 2, '0') ||

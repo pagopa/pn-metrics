@@ -1,8 +1,8 @@
-WITH params AS (
+WITH date_analysis AS (
     SELECT
-        CAST(date_format(date_add('day', -10, current_date), '%Y%m%d') AS integer) AS start_partition_key,
+        CAST(date_format(date_add('day', -7, current_date), '%Y%m%d') AS integer) AS start_partition_key,
         CAST(date_format(date_add('day', -1, current_date), '%Y%m%d') AS integer) AS max_partition_key,
-        date_add('day', -10, current_date) AS start_sent_date,
+        date_add('day', -7, current_date) AS start_sent_date,
         date_add('day', -1, current_date) AS end_sent_date
 ),
 
@@ -17,7 +17,7 @@ notification_latest AS (
                 ORDER BY n.kinesis_dynamodb_ApproximateCreationDateTime DESC
             ) AS rn
         FROM "cdc_analytics_database"."pn_notifications_json_view" n
-        CROSS JOIN params p
+        CROSS JOIN date_analysis p
         WHERE CAST(
                 CAST(n.p_year AS varchar) ||
                 LPAD(CAST(n.p_month AS varchar), 2, '0') ||
@@ -67,7 +67,7 @@ notification_cost_ranked AS (
         ) AS rn
 
     FROM "cdc_analytics_database"."pn_notifications_cost_json_view" nc
-    CROSS JOIN params p
+    CROSS JOIN date_analysis p
     WHERE CAST(
             CAST(nc.p_year AS varchar) ||
             LPAD(CAST(nc.p_month AS varchar), 2, '0') ||
@@ -105,7 +105,7 @@ delivery_cost_last_event AS (
         INNER JOIN notification_cost_perimeter ncp
             ON ncp.iun = dc.dynamodb_keys_pk
            AND ncp.recipientIdx = TRY_CAST(dc.dynamodb_keys_sk AS integer)
-        CROSS JOIN params p
+        CROSS JOIN date_analysis p
         WHERE CAST(
                 CAST(dc.p_year AS varchar) ||
                 LPAD(CAST(dc.p_month AS varchar), 2, '0') ||
@@ -128,7 +128,7 @@ delivery_cost_latest AS (
         INNER JOIN notification_cost_perimeter ncp
             ON ncp.iun = dc.dynamodb_keys_pk
            AND ncp.recipientIdx = TRY_CAST(dc.dynamodb_keys_sk AS integer)
-        CROSS JOIN params p
+        CROSS JOIN date_analysis p
         WHERE CAST(
                 CAST(dc.p_year AS varchar) ||
                 LPAD(CAST(dc.p_month AS varchar), 2, '0') ||
