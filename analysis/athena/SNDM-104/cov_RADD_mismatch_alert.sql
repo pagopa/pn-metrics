@@ -47,6 +47,7 @@ analog_notifications AS (
     AND substr(n.notificationSentAt, 1, 10) >= p.start_date_str
     AND substr(n.notificationSentAt, 1, 10) <= p.today_str
     AND TRY_CAST(n.attempt_str AS integer) IN (0, 1)
+    AND from_iso8601_timestamp(n.notificationSentAt) <= current_timestamp - INTERVAL '30' MINUTE
 ),
 
 analog_filtered AS (
@@ -90,6 +91,17 @@ aar_latest AS (
   GROUP BY 1, 2
 ),
 
+radd_removed_caps AS (
+  SELECT DISTINCT
+    COALESCE(NULLIF(TRIM(c.cap), ''), NULLIF(TRIM(c.dynamodb_keys_cap), '')) AS cap
+  FROM pn_radd_coverage_json_view c
+  CROSS JOIN params p
+  WHERE CAST(c.p_year || LPAD(c.p_month, 2, '0') || LPAD(c.p_day, 2, '0') AS integer)
+        BETWEEN p.start_cov_fixed_int AND p.today_int
+    AND COALESCE(UPPER(TRIM(c.stream_eventname)), '') = 'REMOVE'
+    AND COALESCE(NULLIF(TRIM(c.cap), ''), NULLIF(TRIM(c.dynamodb_keys_cap), '')) IS NOT NULL
+),
+
 radd_coverage AS (
   SELECT
     c.cap,
@@ -103,8 +115,12 @@ radd_coverage AS (
     END AS end_validity
   FROM pn_radd_coverage_json_view c
   CROSS JOIN params p
+  LEFT JOIN radd_removed_caps r
+    ON c.cap = r.cap
   WHERE CAST(c.p_year || LPAD(c.p_month, 2, '0') || LPAD(c.p_day, 2, '0') AS integer)
         BETWEEN p.start_cov_fixed_int AND p.today_int
+    AND r.cap IS NULL
+    AND COALESCE(UPPER(TRIM(c.stream_eventname)), '') <> 'REMOVE'
   GROUP BY c.cap
 ),
 
@@ -252,4 +268,5 @@ WHERE mismatch_reason IS NOT NULL
     OR (iun = 'KYNM-LZEJ-LTDW-202602-V-1' AND recindex = '0' AND attempt = 0)
     OR (iun = 'UZNZ-ELRA-HYWP-202602-U-1' AND recindex = '0' AND attempt = 0)
     OR (iun = 'RVWX-MDTH-LHWX-202602-U-1' AND recindex = '0' AND attempt = 1)
+    OR (iun = 'UQPZ-YWUZ-DQLA-202605-L-1' AND recindex = '0' AND attempt = 0)
   );
