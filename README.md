@@ -23,6 +23,21 @@ Per creare e visualizzare i diagrammi Mermaid è necessario avere:
 **Estensione consigliata:**
 - https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart
 
+### Template
+
+Per garantire uniformità tra i diagrammi ER, utilizzare come base il file:
+
+- `send_diagrams/data-models/template.mmd`
+
+Convenzioni principali:
+
+- entità principali in grassetto
+- chiavi primarie marcate con `PK`
+- campi obbligatori marcati con `NOT NULL`
+- oggetti e array di primo livello rappresentati come entità separate
+- cardinalità esplicitate nelle relazioni (`1:1`, `1:N`, `1:0..1`)
+- oggetti particolarmente estesi o soggetti a frequenti modifiche possono non essere espansi e rimandare al data contract per il dettaglio completo
+
 ### Data Models Diagrams
 
 I diagrammi sono basati su file `.mmd` Mermaid e sono organizzati nella folder `send_diagrams` ed organizzati su due livelli di dettaglio.
@@ -67,27 +82,3 @@ Utili per:
 - comprendere il modello logico complessivo
 - visualizzare le relazioni principali tra domini
 - supportare analisi trasversali
-
-## Configurazione Mermaid
-
-Ogni file `.mmd` deve includere la configurazione Mermaid iniziale.
-
-Configurazione standard:
-
-```yaml
----
-config:
-  layout: elk
-  theme: base
-  themeVariables:
-    background: "#FFFFFF"
-    labelBackgroundColor: "#FFFFFF"
-    entityBkgColor: "#FFFFFF"
-    attributeBkgColor: "#FFFFFF"
-    primaryColor: "#FFFFFF"
----
-
-## Riferimenti
-
-- https://mermaid.js.org/
-- https://mermaid.live/
