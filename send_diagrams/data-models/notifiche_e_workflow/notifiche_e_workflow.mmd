@@ -1,0 +1,130 @@
+---
+config:
+  layout: elk
+  theme: base
+---
+
+erDiagram
+
+    %% version: v0.0.1
+    %% sources:
+    %% - dc-pn-dc-pn-Notifications.yaml v0.0.1
+    %% - dc-pn-timeline.yaml v0.0.1
+
+    Direction LR
+
+    **NotificationsRequest** {
+        STRING iun PK "NOT NULL"
+        STRING requestId
+    }
+
+    **pn_Notifications** {
+        STRING iun PK "NOT NULL"
+        STRING abstract
+        INTEGER amount
+        STRING cancelledByIun
+        STRING cancelledIun
+        ARRAY documents "NOT NULL"
+        STRING group
+        STRING idempotenceToken
+        ARRAY languages
+        STRING notificationFeePolicy
+        STRING pagoPaIntMode
+        STRING paNotificationId "NOT NULL"
+        INTEGER paFee
+        STRING paymentExpirationDate
+        STRING physicalCommunicationType
+        ARRAY recipients "NOT NULL"
+        STRING requestId
+        STRING senderDenomination "NOT NULL"
+        STRING senderPaId "NOT NULL"
+        INTEGER senderPriority
+        STRING senderTaxId "NOT NULL"
+        TIMESTAMP sentAt "NOT NULL"
+        STRING sourceChannel
+        STRING sourceChannelDetails
+        STRING subject "NOT NULL"
+        STRING taxonomyCode
+        OBJECT usedServices
+        INTEGER vat
+        STRING version
+    }
+
+    documents {
+        STRING contentType "NOT NULL"
+        OBJECT digests
+        OBJECT ref "NOT NULL"
+        BOOLEAN requiresAck
+        BOOLEAN sendByMail
+        STRING title "NOT NULL"
+    }
+
+    languages {
+        STRING lang
+    }
+
+    recipients {
+        STRING denomination
+        OBJECT digitalDomicile
+        ARRAY payments
+        STRING recipientId
+        STRING recipientType
+    }
+
+    usedServices {
+        BOOLEAN physicalAddressLookup
+    }
+
+    **pn_Timeline** {
+        STRING timelineElementId PK "NOT NULL"
+        STRING iun "NOT NULL"
+        STRING paId "NOT NULL"
+        STRING category "NOT NULL"
+        TIMESTAMP notificationSentAt "NOT NULL"
+        TIMESTAMP timestamp "NOT NULL"
+        TIMESTAMP businessTimestamp
+        STRING reworkId
+        OBJECT details
+        ARRAY legalFactId
+        OBJECT statusInfo
+    }
+
+    %% Il campo details non viene espanso nel diagramma poiché la sua struttura è estesa e soggetta a evoluzioni.
+    %% Il dettaglio completo dei campi è disponibile nel data contract e nella relativa documentazione.
+    *details
+
+    legalFactId {
+        STRING category
+        STRING key
+    }
+
+    statusInfo {
+        STRING actual
+        TIMESTAMP statusChangeTimestamp
+        BOOLEAN statusChanged
+    }
+
+    %% RELAZIONI
+
+    **NotificationsRequest** ||--|| **pn_Notifications** : "1:1"
+    **pn_Notifications** ||--o{ **pn_Timeline** : "1:N"
+    **pn_Notifications** ||--o{ documents : "1:N"
+    **pn_Notifications** ||--o{ languages : "1:N"
+    **pn_Notifications** ||--o{ recipients : "1:N"
+    **pn_Notifications** ||--o| usedServices : "1:0..1"
+    **pn_Timeline** ||--o{ legalFactId : "1:N"
+    **pn_Timeline** ||--o| statusInfo : "1:0..1"
+    **pn_Timeline** ||--o| *details : "1:0..1"
+
+    %% STILE
+
+    style **NotificationsRequest** fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style **pn_Notifications** fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style **pn_Timeline** fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style documents fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style languages fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style recipients fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style usedServices fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style legalFactId fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style statusInfo fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style *details fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000

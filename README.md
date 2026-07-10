@@ -12,134 +12,79 @@ Nel team Metriche vengono adottati diagrammi Mermaid per rappresentare e documen
 - **diagram-chart**: diagrammi di flusso e sequenza che rappresentano i processi applicativi e le interazioni tra sistemi  
   - Path: `send_diagrams\diagram-chart`
 
----
+### Prerequisiti
 
-## Diagrammi di modello dati
+Per creare e visualizzare i diagrammi Mermaid è necessario avere:
 
-I diagrammi sono basati su file **`.mmd`** ed organizzati per dominio funzionale nella folder:
+- Visual Studio Code installato
+- estensione Mermaid Chart per VS Code installata
+- file `.mmd` salvati nella struttura prevista
+
+**Estensione consigliata:**
+- https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart
+
+### Data Models Diagrams
+
+I diagrammi sono basati su file `.mmd` Mermaid e sono organizzati nella folder `send_diagrams` ed organizzati su due livelli di dettaglio.
+
+- diagrammi ER per dominio funzionale
+- diagramma ER globale SEND
+
+#### Diagrammi per dominio funzionale
+
+Rappresentano il modello dati di uno specifico dominio SEND.
+
+**Esempio:**
+
+- `notifiche_e_workflow.mmd`
+Ogni diagramma, per una specifica area funzionale, include:
+
+- versione del diagramma
+- sorgenti utilizzate
+- entità principali del dominio
+- oggetti annidati di primo livello rilevanti
+- relazioni tra entità
+- attributi principali
+- vincoli PK / FK / NOT NULL quando disponibili
 
 
-send_diagrams/
-└── data-models/
-├── notifiche_e_workflow/
-    ├── pn_notifications.mmd
-    ├── pn_timeline.mmd
-├── postalizzazione/
-    ├── pn_ec_richieste_metadati.mmd
-└── send_er_model.mmd
+#### Diagramma ER globale
 
----
+Fornisce una vista sintetica del modello dati SEND.
 
-## Tipologie di diagrammi
+**Esempio:**
 
-I diagrammi sono organizzati su due livelli di dettaglio:
+- `send_er_model.mmd`
 
-### Diagrammi per singola entità (dettaglio)
+Include:
 
-- Rappresentano il modello dati completo di una specifica tabella/dominio
-- Includono:
-  - tutti gli attributi
-  - relazioni con le entità collegate
-- Esempi:
-  - `pn_notifications.mmd`
-  - `pn_timeline.mmd`
-  - `pn_ec_richieste_metadati.mmd`
+- entità principali
+- chiavi primarie e chiavi esterne rilevanti
+- relazioni principali tra domini
 
 Utili per:
-- analisi di dettaglio
-- allineamento ai data contract
-- attività di sviluppo e debugging
 
----
-
-### Diagramma ER globale (vista sintetica)
-
-- Fornisce una vista d’insieme del dominio SEND
-- Include solo:
-  - entità principali
-  - PK / FK rilevanti
-  - relazioni principali
-
-- Esempio:
-  - `send_er_model.mmd`
-
-Utile per:
 - comprendere il modello logico complessivo
-- visualizzare integrazioni tra domini
+- visualizzare le relazioni principali tra domini
+- supportare analisi trasversali
 
+## Configurazione Mermaid
+
+Ogni file `.mmd` deve includere la configurazione Mermaid iniziale.
+
+Configurazione standard:
+
+```yaml
 ---
-
-## Naming convention file
-
-Per garantire coerenza e navigabilità, i file seguono le seguenti convenzioni:
-
-### Diagrammi per singola entità
-
-pn_<entità>.mmd
-
-Esempi:
-- `pn_notifications.mmd`
-- `pn_timeline.mmd`
-- `pn_ec_richieste_metadati.mmd`
-
----
-
-### Linee guida naming
-- utilizzare lowercase con underscore (`snake_case`)
-- prefisso `pn_` per entità legate al dominio SEND
-- nome file allineato alla tabella / modello del data contract
-- un file per entità logica
-
----
-
-## Come scrivere un diagramma Mermaid
-
-1. Creare file `.mmd`
-2. Inserire sintassi Mermaid (es. ER, flowchart)
-3. Salvare nella cartella del repository
-
-Esempio:
-
-```
-erDiagram
-ENTITY_A {
-  string id PK
-  string name
-}
-ENTITY_B {
-  string id PK
-  string entityAId FK
-}
-ENTITY_A ||--o{ ENTITY_B : "has"
-```
-
----
-
-## Header del diagramma
-
-Ogni file deve includere versione e sorgente:
-
-- Esempio per il diagramma **pn_notifications.mmd**:
-  - %% version: v1.0.0
-  - %% source: dc-pn-Notifications.yaml
-
-> Versionamento dei modelli dati:  
-I diagrammi Mermaid devono essere versionati in modo coerente con i rispettivi Data Contract, adottando uno schema di versioning semantico: **vMAJOR.MINOR.PATCH**
-
-| Tipo modifica   | Versione |
-|---------------|---------|
-| Breaking change | MAJOR |
-| Nuovi campi     | MINOR |
-| Fix             | PATCH |
-
----
-
-## Visualizzazione in VS Code
-
-- Aprire file `.mmd`
-- `Ctrl + Shift + P` → Mermaid Preview
-- Dalla Preview è possibile esportare in PNG/SVG
-
+config:
+  layout: elk
+  theme: base
+  themeVariables:
+    background: "#FFFFFF"
+    labelBackgroundColor: "#FFFFFF"
+    entityBkgColor: "#FFFFFF"
+    attributeBkgColor: "#FFFFFF"
+    primaryColor: "#FFFFFF"
 ---
 
 ## Riferimenti
