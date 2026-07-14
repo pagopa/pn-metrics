@@ -1,0 +1,42 @@
+---
+config:
+  layout: elk
+  theme: base
+  themeVariables:
+    background: "#FFFFFF"
+    labelBackgroundColor: "#FFFFFF"
+    entityBkgColor: "#FFFFFF"
+    attributeBkgColor: "#FFFFFF"
+    primaryColor: "#FFFFFF"
+---
+
+erDiagram
+
+    %% diagram version: v0.0.1
+    %% sources:
+    %% - dc-pn-Notifications.yaml
+    %%   id: urn:send:pn:notifications
+    %%   version: 0.0.1
+    %% - dc-pn-timeline.yaml
+    %%   id: urn:send:pn:timelines
+    %%   version: 0.0.1
+
+    Direction LR
+
+
+    NOTIFICATIONS {
+        string iun PK
+    }
+
+    TIMELINE {
+        string timelineElementId PK
+        string iun FK
+    }
+
+    NOTIFICATIONS_REQUEST {
+        string iun PK
+    }
+
+    %% RELAZIONI
+    NOTIFICATIONS ||--o{TIMELINE : "1:N"
+    NOTIFICATIONS_REQUEST ||--|| NOTIFICATIONS : "1:1"
