@@ -2,103 +2,83 @@
 
 Questo repository raccoglie script, query e materiali di supporto per l'analisi e il monitoraggio del prodotto SEND.
 
-## Mermaid Diagrams – Quick Guide
+## Diagrammi Mermaid
 
-Questa guida descrive in modo essenziale come creare, gestire ed esportare diagrammi Mermaid in Visual Studio Code tramite l'estensione Mermaid Preview.
+Nel team Metriche vengono adottati diagrammi Mermaid per rappresentare e documentare in modo standardizzato sia i modelli dati sia i flussi applicativi e architetturali.
 
-### Workflow consigliato
+- **data-models**: diagrammi Entity-Relationship (ER) che descrivono la struttura dei dati, le entità principali, gli attributi e le relazioni tra dataset  
+  - Path: `send_diagrams\data-models`
 
-Per mantenere i diagrammi ordinati, aggiornati e coerenti con il repository, si suggerisce il seguente flusso:
-
-1. **Scrittura e manutenzione**: salvare i diagrammi come file `.mmd` direttamente nel repository, così da versionarli insieme al codice.
-2. **Visualizzazione in sviluppo**: utilizzare Mermaid Preview per controllare il risultato grafico durante la modifica.
-3. **Esportazione**: generare PNG o SVG solo quando necessario per documentazione esterna o presentazioni.
-
-Questo approccio semplifica la manutenzione e garantisce l'allineamento tra documentazione e contenuti versionati.
+- **diagram-chart**: diagrammi di flusso e sequenza che rappresentano i processi applicativi e le interazioni tra sistemi  
+  - Path: `send_diagrams\diagram-chart`
 
 ### Prerequisiti
 
-Prima di procedere, verificare di disporre di:
+Per creare e visualizzare i diagrammi Mermaid è necessario avere:
 
-- **Visual Studio Code**: scaricabile da [code.visualstudio.com](https://code.visualstudio.com/).
-- **Estensione Mermaid Preview**:
-  - installazione tramite pannello Extensions (`Ctrl+Shift+X`) cercando “Mermaid Preview”;
-  - link diretto: https://marketplace.visualstudio.com/items?itemName=vstirbu.vscode-mermaid-preview;
-  - funzionalità principali: anteprima interattiva, esportazione e personalizzazione del tema.
-- **Posizione corretta nel repository**: salvare i file `.mmd` nella cartella più adatta al contenuto rappresentato.
+- Visual Studio Code installato
+- estensione Mermaid Chart per VS Code installata
+- file `.mmd` salvati nella struttura prevista
 
-### Convenzioni di naming
+**Estensione consigliata:**
+- https://marketplace.visualstudio.com/items?itemName=MermaidChart.vscode-mermaid-chart
 
-Per favorire ordine e tracciabilità, adottare le seguenti convenzioni:
+### Template
 
-- **File Mermaid (`.mmd`)**:
-  - il nome deve descrivere il workflow o il modulo logico rappresentato, seguito dal **tipo di diagramma**;
-  - esempio: `notifications_timeline_er.mmd`.
+Per garantire uniformità tra i diagrammi ER, utilizzare come base il file:
 
-- **Immagini esportate (PNG o SVG)**:
-  - utilizzare lo stesso nome del file Mermaid, dalla data e una versione;
-  - esempio: `notifications_timeline_er_13_03_26_v1.png`.
+- `send_diagrams/data-models/template.mmd`
 
-Questa convenzione rende più semplice individuare, aggiornare e confrontare i diagrammi nel tempo.
+Convenzioni principali:
 
-### Creazione di un file Mermaid
+- entità principali in grassetto
+- chiavi primarie marcate con `PK`
+- campi obbligatori marcati con `NOT NULL`
+- oggetti e array di primo livello rappresentati come entità separate
+- cardinalità esplicitate nelle relazioni (`1:1`, `1:N`, `1:0..1`)
+- oggetti particolarmente estesi o soggetti a frequenti modifiche possono non essere espansi e rimandare al data contract per il dettaglio completo
 
-Per creare un nuovo diagramma:
+### Data Models Diagrams
 
-1. creare un file con estensione `.mmd`, ad esempio `nuovo_diagramma.mmd`;
-2. inserire direttamente la sintassi Mermaid;
-3. scegliere il tipo di diagramma appropriato, ad esempio ER o flowchart;
-4. salvare il file nella cartella designata del repository.
+I diagrammi sono basati su file `.mmd` Mermaid e sono organizzati nella folder `send_diagrams` ed organizzati su due livelli di dettaglio.
 
-#### Esempio
+- diagrammi ER per dominio funzionale
+- diagramma ER globale SEND
 
-Di seguito un esempio minimale di diagramma ER:
+#### Diagrammi per dominio funzionale
 
-```
-erDiagram
-    ENTITY_A {
-        string id PK
-        string name
-        timestamp createdAt
-    }
-    ENTITY_B {
-        string id PK
-        string entityAId FK
-        string description
-    }
-    ENTITY_A ||--o{ ENTITY_B : "has"
-```
+Rappresentano il modello dati di uno specifico dominio SEND.
 
-Il diagramma rappresenta:
+**Esempio:**
 
-- `ENTITY_A` come entità principale con chiave primaria `id`;
-- `ENTITY_B` come entità correlata tramite chiave esterna `entityAId`;
-- una relazione uno-a-molti tra `ENTITY_A` e `ENTITY_B`.
+- `notifiche_e_workflow.mmd`
+Ogni diagramma, per una specifica area funzionale, include:
 
-### Visualizzazione in VS Code
+- versione del diagramma
+- sorgenti utilizzate
+- entità principali del dominio
+- oggetti annidati di primo livello rilevanti
+- relazioni tra entità
+- attributi principali
+- vincoli PK / FK / NOT NULL quando disponibili
 
-Per aprire l'anteprima del diagramma:
 
-1. aprire il file `.mmd` in VS Code;
-2. richiamare la Command Palette con `Ctrl+Shift+P`;
-3. selezionare il comando **Mermaid Preview: Diagram Preview**;
-4. aggiornare e salvare il file per vedere l'anteprima ricaricarsi automaticamente.
+#### Diagramma ER globale
 
-L'anteprima supporta anche operazioni di navigazione utili, come zoom e spostamento.
+Fornisce una vista sintetica del modello dati SEND.
 
-Se la preview non è disponibile, verificare che l'estensione sia installata, attiva e che il file abbia estensione `.mmd`.
+**Esempio:**
 
-### Esportazione come immagine
+- `send_er_model.mmd`
 
-Quando serve una versione statica del diagramma:
+Include:
 
-1. aprire l'anteprima;
-2. usare il comando di esportazione dell'estensione per salvare in PNG o SVG;
-3. rinominare il file secondo la convenzione definita.
+- entità principali
+- chiavi primarie e chiavi esterne rilevanti
+- relazioni principali tra domini
 
-In alternativa, per esigenze rapide, è possibile acquisire uno screenshot dell'anteprima.
+Utili per:
 
-### Risorse aggiuntive
-
-- **Documentazione Mermaid**: [mermaid.js.org](https://mermaid.js.org/)
-- **Esempi e playground**: [mermaid.live](https://mermaid.live)
+- comprendere il modello logico complessivo
+- visualizzare le relazioni principali tra domini
+- supportare analisi trasversali
