@@ -9,12 +9,12 @@ erDiagram
     %% diagram version: 0.0.1
     %% sources:
     %% - dc-pn-EcRichiesteMetadati.yaml
-    %%   id: urn:send:postalizzazione:pn-ecrichiestemetadati
+    %%   id: urn:send:postalizzazione:pn_ecrichiestemetadati
     %%   version: 0.0.1
 
     Direction LR
 
-    pn-EcRichiesteMetadati {
+    pn_EcRichiesteMetadati {
         string requestId PK "NOT NULL"
         string clientRequestTimeStamp "NOT NULL"
         array eventsList "NOT NULL"
@@ -30,7 +30,7 @@ erDiagram
         string XPagopaExtchCxId "NOT NULL"
     }
 
-    pn-EcAnagrafica {
+    pn_EcAnagrafica {
         string cxId PK "NOT NULL"
         string apiKey
         string mailReplyTo "NOT NULL"
@@ -48,7 +48,7 @@ erDiagram
         string pr
     }
 
-    pn-EcRichieste {
+    pn_EcRichieste {
         string requestId PK "NOT NULL"
         string clientRequestTimeStamp "NOT NULL"
         object digitalRequestPersonal
@@ -57,7 +57,7 @@ erDiagram
         string XPagopaExtchCxId "NOT NULL"
     }
 
-    pn-EcRichiesteConversione {
+    pn_EcRichiesteConversione {
         string requestId PK
         string clientId
         string requestTimestamp
@@ -66,7 +66,7 @@ erDiagram
         long expiration
     }
 
-    pn-EcConversionePDF {
+    pn_EcConversionePDF {
         string fileKey PK
         string requestId
         long expiration
@@ -107,34 +107,34 @@ erDiagram
     %% RELAZIONI
 
     
-    pn-EcAnagrafica ||--|| senderPhysicalAddress : ""
+    pn_EcAnagrafica ||--|| senderPhysicalAddress : ""
     
-    %% pn-EcRichiesteMetadati.XPagopaExtchCxId = pn-EcAnagrafica.cxId
-    pn-EcAnagrafica ||--o{ pn-EcRichiesteMetadati : "1:N"
+    %% pn_EcRichiesteMetadati.XPagopaExtchCxId = pn_EcAnagrafica.cxId
+    pn_EcAnagrafica ||--o{ pn_EcRichiesteMetadati : "1:N"
 
-    %% pn-EcRichieste.XPagopaExtchCxId = pn-EcAnagrafica.cxId
-    pn-EcAnagrafica ||--o{ pn-EcRichieste : "1:N"
+    %% pn_EcRichieste.XPagopaExtchCxId = pn_EcAnagrafica.cxId
+    pn_EcAnagrafica ||--o{ pn_EcRichieste : "1:N"
 
-    %% pn-EcRichieste.requestId = pn-EcRichiesteMetadati.requestId
-    pn-EcRichieste ||--|| pn-EcRichiesteMetadati : "1:1"
+    %% pn_EcRichieste.requestId = pn_EcRichiesteMetadati.requestId
+    pn_EcRichieste ||--|| pn_EcRichiesteMetadati : "1:1"
 
-    pn-EcRichieste ||--|| digitalRequestPersonal : ""
-    pn-EcRichieste ||--|| paperRequestPersonal : ""
+    pn_EcRichieste ||--|| digitalRequestPersonal : ""
+    pn_EcRichieste ||--|| paperRequestPersonal : ""
 
-    %% pn-EcRichieste.requestId = pn-EcRichiesteConversione.requestId
-    pn-EcRichieste o|--|| pn-EcRichiesteConversione : "0..1 : 1"
+    %% pn_EcRichieste.requestId = pn_EcRichiesteConversione.requestId
+    pn_EcRichieste o|--|| pn_EcRichiesteConversione : "0..1 : 1"
 
-    %% pn-EcConversionePDF.requestId = pn-EcRichiesteConversione.requestId
-    pn-EcRichiesteConversione ||--o{ pn-EcConversionePDF : "1:N"
+    %% pn_EcConversionePDF.requestId = pn_EcRichiesteConversione.requestId
+    pn_EcRichiesteConversione ||--o{ pn_EcConversionePDF : "1:N"
 
     
     %% STILE
 
-    style pn-EcAnagrafica fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    style pn-EcRichieste fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    style pn-EcRichiesteMetadati fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    style pn-EcRichiesteConversione fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    style pn-EcConversionePDF fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_EcAnagrafica fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_EcRichieste fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_EcRichiesteMetadati fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_EcRichiesteConversione fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_EcConversionePDF fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style senderPhysicalAddress fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style digitalRequestPersonal fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style paperRequestPersonal fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
