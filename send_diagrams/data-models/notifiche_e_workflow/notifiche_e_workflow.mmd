@@ -17,12 +17,12 @@ erDiagram
 
     Direction LR
 
-    **NotificationsRequest** {
+    NotificationsRequest {
         STRING iun PK "NOT NULL"
         STRING requestId
     }
 
-    **pn_Notifications** {
+    pn_Notifications {
         STRING iun PK "NOT NULL"
         STRING abstract
         INTEGER amount
@@ -79,7 +79,7 @@ erDiagram
         BOOLEAN physicalAddressLookup
     }
 
-    **pn_Timeline** {
+    pn_Timeline {
         STRING timelineElementId PK "NOT NULL"
         STRING iun "NOT NULL"
         STRING paId "NOT NULL"
@@ -110,21 +110,21 @@ erDiagram
 
     %% RELAZIONI
 
-    **NotificationsRequest** ||--|| **pn_Notifications** : "1:1"
-    **pn_Notifications** ||--o{ **pn_Timeline** : "1:N"
-    **pn_Notifications** ||--o{ documents : "1:N"
-    **pn_Notifications** ||--o{ languages : "1:N"
-    **pn_Notifications** ||--o{ recipients : "1:N"
-    **pn_Notifications** ||--o| usedServices : "1:0..1"
-    **pn_Timeline** ||--o{ legalFactId : "1:N"
-    **pn_Timeline** ||--o| statusInfo : "1:0..1"
-    **pn_Timeline** ||--o| *details : "1:0..1"
+    NotificationsRequest ||--|| pn_Notifications : "1:1"
+    pn_Notifications ||--o{ pn_Timeline : "1:N"
+    pn_Notifications ||--o{ documents : "1:N"
+    pn_Notifications ||--o{ languages : "1:N"
+    pn_Notifications ||--o{ recipients : "1:N"
+    pn_Notifications ||--o| usedServices : "1:0..1"
+    pn_Timeline ||--o{ legalFactId : "1:N"
+    pn_Timeline ||--o| statusInfo : "1:0..1"
+    pn_Timeline ||--o| *details : "1:0..1"
 
     %% STILE
 
-    style **NotificationsRequest** fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    style **pn_Notifications** fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    style **pn_Timeline** fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style NotificationsRequest fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_Notifications fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_Timeline fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style documents fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style languages fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style recipients fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000

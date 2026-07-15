@@ -1,0 +1,140 @@
+---
+config:
+  layout: elk
+  theme: base
+---
+
+erDiagram
+
+    %% diagram version: 0.0.1
+    %% sources:
+    %% - dc-pn-EcRichiesteMetadati.yaml
+    %%   id: urn:send:postalizzazione:pn-ecrichiestemetadati
+    %%   version: 0.0.1
+
+    Direction LR
+
+    pn-EcRichiesteMetadati {
+        string requestId PK "NOT NULL"
+        string clientRequestTimeStamp "NOT NULL"
+        array eventsList "NOT NULL"
+        string insertTimestamp
+        object digitalRequestMetadata
+        object paperRequestMetadata
+        string requestHash "NOT NULL"
+        string requestTimestamp "NOT NULL"
+        string statusRequest "NOT NULL"
+        long version "NOT NULL"
+        string lastUpdateTimestamp "NOT NULL"
+        string messageId
+        string XPagopaExtchCxId "NOT NULL"
+    }
+
+    pn-EcAnagrafica {
+        string cxId PK "NOT NULL"
+        string apiKey
+        string mailReplyTo "NOT NULL"
+        string pecReplyTo "NOT NULL"
+        object senderPhysicalAddress "NOT NULL"
+        string sqsArn "NOT NULL"
+        string sqsName "NOT NULL"
+    }
+
+    senderPhysicalAddress {
+        string address
+        string cap
+        string city
+        string name
+        string pr
+    }
+
+    pn-EcRichieste {
+        string requestId PK "NOT NULL"
+        string clientRequestTimeStamp "NOT NULL"
+        object digitalRequestPersonal
+        object paperRequestPersonal
+        string requestTimestamp "NOT NULL"
+        string XPagopaExtchCxId "NOT NULL"
+    }
+
+    pn-EcRichiesteConversione {
+        string requestId PK
+        string clientId
+        string requestTimestamp
+        array attachments
+        object originalRequest
+        long expiration
+    }
+
+    pn-EcConversionePDF {
+        string fileKey PK
+        string requestId
+        long expiration
+    }
+
+    digitalRequestPersonal {
+        array attachmentsUrls
+        string messageText "NOT NULL"
+        string qos "NOT NULL"
+        string receiverDigitalAddress "NOT NULL"
+        string senderDigitalAddress
+        string subjectText "NOT NULL"
+    }
+
+    paperRequestPersonal {
+        array arAddress
+        string arCap "NOT NULL"
+        string arCity "NOT NULL"
+        string arName
+        array attachments
+        string receiverAddress
+        string receiverAddressRow2
+        string receiverCap
+        string receiverCity
+        string receiverCity2
+        string receiverCountry
+        string receiverFiscalCode
+        string receiverName
+        string receiverNameRow2
+        string receiverPr
+        string senderAddress
+        string senderCity
+        string senderDigitalAddress
+        string senderName
+        string senderPr
+    }
+
+    %% RELAZIONI
+
+    
+    pn-EcAnagrafica ||--|| senderPhysicalAddress : ""
+    
+    %% pn-EcRichiesteMetadati.XPagopaExtchCxId = pn-EcAnagrafica.cxId
+    pn-EcAnagrafica ||--o{ pn-EcRichiesteMetadati : "1:N"
+
+    %% pn-EcRichieste.XPagopaExtchCxId = pn-EcAnagrafica.cxId
+    pn-EcAnagrafica ||--o{ pn-EcRichieste : "1:N"
+
+    %% pn-EcRichieste.requestId = pn-EcRichiesteMetadati.requestId
+    pn-EcRichieste ||--|| pn-EcRichiesteMetadati : "1:1"
+
+    pn-EcRichieste ||--|| digitalRequestPersonal : ""
+    pn-EcRichieste ||--|| paperRequestPersonal : ""
+
+    %% pn-EcRichieste.requestId = pn-EcRichiesteConversione.requestId
+    pn-EcRichieste o|--|| pn-EcRichiesteConversione : "0..1 : 1"
+
+    %% pn-EcConversionePDF.requestId = pn-EcRichiesteConversione.requestId
+    pn-EcRichiesteConversione ||--o{ pn-EcConversionePDF : "1:N"
+
+    
+    %% STILE
+
+    style pn-EcAnagrafica fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn-EcRichieste fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn-EcRichiesteMetadati fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn-EcRichiesteConversione fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn-EcConversionePDF fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style senderPhysicalAddress fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style digitalRequestPersonal fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style paperRequestPersonal fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
