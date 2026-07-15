@@ -23,19 +23,17 @@ erDiagram
     %% - dc-operations-iuns-entity.yaml
     %%   id: urn:send:radd-alt:dc-operations-iuns-entity
     %%   version: 0.0.1
+    %% - dc-pn-EcRichiesteMetadati.yaml
+    %%   id: urn:send:postalizzazione:pn-ecrichiestemetadati
+    %%   version: 0.0.1
 
     %% CONVENZIONI
-    %% - Diagramma di integrazione tra domini SEND e RADD
     %% - Sono riportate esclusivamente le entità principali
     %% - Sono riportati solamente attributi PK e FK
     %% - Le cardinalità derivano dai diagrammi di dettaglio dei singoli domini
     %% - I commenti descrivono la logica di correlazione tra le entità
 
     Direction LR
-
-    NotificationsRequest {
-        STRING iun PK
-    }
 
     pn_Notifications {
         STRING iun PK
@@ -71,27 +69,26 @@ erDiagram
     %% RaddTransactionEntity.transactionId = OperationsIunEntity.transactionId
     RaddTransactionEntity ||--o{ OperationsIunEntity : "1:N"
 
-    %% RaddRegistryV2.partnerId = RaddTransactionEntity.partnerId
-    %% AND RaddRegistryV2.locationId = RaddTransactionEntity.locationId
+    %% RaddRegistryV2.partnerId = RaddTransactionEntity.partnerId AND RaddRegistryV2.locationId = RaddTransactionEntity.locationId
     RaddRegistryV2 ||--o{ RaddTransactionEntity : "1:N"
 
-    %% pn_Notifications.iun = OperationsIunEntity.iun
+    %% Operazioni ACT: stampa atti notificati
+    %% pn_Notifications.iun = RaddTransactionEntity.iun
+    pn_Notifications ||--o{ RaddTransactionEntity : "1:N"
+
+    %% Operazioni AOR: accesso a notifica per irreperibile
+    %% OperationsIunEntity.iun = pn_Notifications.iun
     pn_Notifications ||--o{ OperationsIunEntity : "1:N"
 
     %% Join a livello di notifica: pn_Notifications.iun = pn_Timeline.iun
-    %% Join a livello di destinatario:
-    %% pn_Notifications.iun = pn_Timeline.iun
-    %% AND pn_Timeline.recIndex identifica il destinatario della notifica
+    %% Join a livello di destinatario: pn_Notifications.iun = pn_Timeline.iun AND pn_Timeline.recIndex identifica il destinatario della notifica
     pn_Notifications ||--o{ pn_Timeline : "1:N"
-
-    %% NotificationsRequest.iun = pn_Notifications.iun
-    NotificationsRequest ||--|| pn_Notifications : "1:1"
 
     %% STILE
 
-    style NotificationsRequest fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style pn_Notifications fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style pn_Timeline fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style RaddRegistryV2 fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style RaddTransactionEntity fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style OperationsIunEntity fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    
