@@ -45,11 +45,13 @@ erDiagram
 
     pn_Notifications {
         STRING iun PK
+        ARRAY recipients
     }
 
     pn_Timeline {
         STRING timelineElementId PK
         STRING iun FK
+        INT details.recIndex
     }
 
     RaddRegistryV2 {
@@ -74,7 +76,8 @@ erDiagram
     %% NotificationsRequest.iun = pn_Notifications.iun
     NotificationsRequest ||--|| pn_Notifications : "1:1"
 
-    %% pn_Notifications.iun = pn_Timeline.iun
+    %% Join a livello di notifica: pn_Notifications.iun = pn_Timeline.iun
+    %% Join a livello di destinatario: pn_Notifications.iun = pn_Timeline.iun AND pn_Notifications.recipient.pos = pn_Timeline.details.recIndex
     pn_Notifications ||--o{ pn_Timeline : "1:N"
 
     %% pn_Notifications.iun = OperationsIunEntity.iun
