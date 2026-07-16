@@ -2,17 +2,11 @@
 config:
   layout: elk
   theme: base
-  themeVariables:
-    background: "#FFFFFF"
-    labelBackgroundColor: "#FFFFFF"
-    entityBkgColor: "#FFFFFF"
-    attributeBkgColor: "#FFFFFF"
-    primaryColor: "#FFFFFF"
 ---
-
 erDiagram
 
-    %% diagram version: v0.0.1
+    %% diagram version: 0.0.1
+
     %% sources:
     %% - dc-pn-Notifications.yaml
     %%   id: urn:send:pn:notifications
@@ -20,23 +14,81 @@ erDiagram
     %% - dc-pn-timeline.yaml
     %%   id: urn:send:pn:timelines
     %%   version: 0.0.1
+    %% - dc-radd-transaction-entity.yaml
+    %%   id: urn:send:radd-alt:dc-radd-transaction-entity
+    %%   version: 0.0.1
+    %% - dc-radd-registry.yaml
+    %%   id: urn:send:radd-alt:dc-radd-registry
+    %%   version: 0.0.1
+    %% - dc-operations-iuns-entity.yaml
+    %%   id: urn:send:radd-alt:dc-operations-iuns-entity
+    %%   version: 0.0.1
+    %% - dc-pn-EcRichiesteMetadati.yaml
+    %%   id: urn:send:postalizzazione:pn-ecrichiestemetadati
+    %%   version: 0.0.1
+
+    %% CONVENZIONI
+    %% - Sono riportate esclusivamente le entità principali
+    %% - Sono riportati solamente attributi PK e FK
+    %% - Le cardinalità derivano dai diagrammi di dettaglio dei singoli domini
+    %% - I commenti descrivono la logica di correlazione tra le entità
 
     Direction LR
 
-
-    NOTIFICATIONS {
-        string iun PK
+    pn_Notifications {
+        STRING iun PK
+        ARRAY recipients
     }
 
-    TIMELINE {
-        string timelineElementId PK
-        string iun FK
+    pn_Timeline {
+        STRING timelineElementId PK
+        STRING iun FK
+        INT recIndex FK
     }
 
-    NOTIFICATIONS_REQUEST {
-        string iun PK
+    RaddRegistryV2 {
+        STRING partnerId PK
+        STRING locationId PK
+    }
+
+    RaddTransactionEntity {
+        STRING transactionId PK
+        STRING operationType PK
+        STRING iun FK
+        STRING partnerId FK
+        STRING locationId FK
+    }
+
+    OperationsIunEntity {
+        STRING transactionId PK
+        STRING iun PK
     }
 
     %% RELAZIONI
-    NOTIFICATIONS ||--o{TIMELINE : "1:N"
-    NOTIFICATIONS_REQUEST ||--|| NOTIFICATIONS : "1:1"
+
+    %% RaddTransactionEntity.transactionId = OperationsIunEntity.transactionId
+    RaddTransactionEntity ||--o{ OperationsIunEntity : "1:N"
+
+    %% RaddRegistryV2.partnerId = RaddTransactionEntity.partnerId AND RaddRegistryV2.locationId = RaddTransactionEntity.locationId
+    RaddRegistryV2 ||--o{ RaddTransactionEntity : "1:N"
+
+    %% Operazioni ACT: stampa atti notificati
+    %% pn_Notifications.iun = RaddTransactionEntity.iun
+    pn_Notifications ||--o{ RaddTransactionEntity : "1:N"
+
+    %% Operazioni AOR: accesso a notifica per irreperibile
+    %% OperationsIunEntity.iun = pn_Notifications.iun
+    pn_Notifications ||--o{ OperationsIunEntity : "1:N"
+
+    %% Join a livello di notifica: pn_Notifications.iun = pn_Timeline.iun
+    %% Join a livello di destinatario: pn_Notifications.iun = pn_Timeline.iun AND pn_Timeline.recIndex identifica il destinatario della notifica
+    pn_Notifications ||--o{ pn_Timeline : "1:N"
+
+    %% STILE
+
+    style pn_Notifications fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_Timeline fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style RaddRegistryV2 fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style RaddTransactionEntity fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style OperationsIunEntity fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    

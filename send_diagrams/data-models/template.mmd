@@ -9,12 +9,11 @@ erDiagram
     %% diagram version: <VERSION>
 
     %% sources:
-    %% - dc-radd-transaction-entity.yaml
-    %%   id: urn:send:radd-alt:dc-radd-transaction-entity
-    %%   version: 0.0.1
+    %% - data_contract.yaml
+    %%   id: urn:...
+    %%   version: ...
 
     %% CONVENZIONI
-    %% - Entità principali in grassetto (**Entity**)
     %% - PK marcata con PK
     %% - Campi obbligatori marcati con "NOT NULL"
     %% - Array e Object di primo livello modellati come entità separate
@@ -25,11 +24,11 @@ erDiagram
 
     %% ENTITÀ PRINCIPALI
 
-    **EntityA** {
+    EntityA {
         STRING id PK "NOT NULL"
     }
 
-    **EntityB** {
+    EntityB {
         STRING id PK "NOT NULL"
         OBJECT ChildEntity
     }
@@ -41,11 +40,11 @@ erDiagram
 
     %% RELAZIONI
 
-    **EntityA** ||--|| **EntityB** : "1:1"
-    **EntityB** ||--o{ ChildEntity : ""
+    EntityA ||--|| EntityB : "1:1"
+    EntityB ||--o{ ChildEntity : ""
 
     %% STILE
 
-    style **EntityA** fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    style **EntityB** fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style EntityA fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style EntityB fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style ChildEntity fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000

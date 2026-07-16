@@ -31,7 +31,6 @@ Per garantire uniformità tra i diagrammi ER, utilizzare come base il file:
 
 Convenzioni principali:
 
-- entità principali in grassetto
 - chiavi primarie marcate con `PK`
 - campi obbligatori marcati con `NOT NULL`
 - oggetti e array di primo livello rappresentati come entità separate
