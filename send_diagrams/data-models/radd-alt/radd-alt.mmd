@@ -1,0 +1,120 @@
+---
+config:
+  layout: elk
+  theme: base
+---
+
+erDiagram
+
+    %% diagram version: 0.0.1
+
+    %% sources:
+    %% - dc-radd-transaction-entity.yaml
+    %%   id: urn:send:radd-alt:dc-radd-transaction-entity
+    %%   version: 0.0.1
+    %% - dc-radd-registry.yaml
+    %%   id: urn:send:radd-alt:dc-radd-registry
+    %%   version: 0.0.1
+    %% - dc-operations-iuns-entity.yaml
+    %%   id: urn:send:radd-alt:dc-operations-iuns-entity
+    %%   version: 0.0.1
+
+    %% CONVENZIONI
+    %% - Entità principali in grassetto nel titolo
+    %% - Entità principali evidenziate con stroke-width:2px
+    %% - PK marcata con PK
+    %% - Campi obbligatori marcati con "NOT NULL"
+    %% - Solo Object e Array di Object di primo livello modellati come entità separate
+    %% - Array di primitive mantenuti come campo, es. ARRAY[STRING]
+    %% - Nome entità figlia uguale al nome campo
+    %% - Relazioni tra root e figli senza etichetta di cardinalità
+    %% - Relazioni ordinate dalla root verso gli oggetti figli
+
+    direction LR
+
+    RaddRegistryV2 {
+        STRING partnerId PK "NOT NULL"
+        STRING locationId PK "NOT NULL"
+        OBJECT address
+        BOOLEAN appointmentRequired
+        STRING creationTimestamp "NOT NULL"
+        STRING description
+        STRING email
+        STRING endValidity
+        ARRAY[STRING] externalCodes
+        BOOLEAN modifiedAddress "NOT NULL"
+        OBJECT normalizedAddress
+        STRING openingTime
+        STRING partnerType "NOT NULL"
+        ARRAY[STRING] phoneNumbers
+        STRING startValidity "NOT NULL"
+        STRING uid "NOT NULL"
+        STRING updateTimestamp "NOT NULL"
+        STRING website
+        LONG ApproximateCreationDateTime "NOT NULL"
+    }
+
+    address {
+        STRING addressRow "NOT NULL"
+        STRING cap "NOT NULL"
+        STRING city "NOT NULL"
+        STRING country
+        STRING province "NOT NULL"
+    }
+
+    normalizedAddress {
+        STRING addressRow "NOT NULL"
+        OBJECT biasPoint "NOT NULL"
+        STRING cap "NOT NULL"
+        STRING country
+        STRING province "NOT NULL"
+        STRING city "NOT NULL"
+        STRING latitude "NOT NULL"
+        STRING longitude "NOT NULL"
+    }
+
+    RaddTransactionEntity {
+        STRING transactionId PK "NOT NULL"
+        STRING operationType PK "NOT NULL"
+        STRING operationId "NOT NULL"
+        STRING iun "NOT NULL"
+        STRING qrCode
+        STRING fileKey
+        STRING checksum
+        STRING operation_status "NOT NULL"
+        STRING recipientId "NOT NULL"
+        STRING recipientType "NOT NULL"
+        STRING delegateId
+        STRING uid "NOT NULL"
+        STRING operationStartDate
+        STRING operationEndDate
+        STRING versionToken
+        STRING errorReason
+        STRING zipAttachments
+        LONG ApproximateCreationDateTime "NOT NULL"
+    }
+
+    OperationsIunEntity {
+        STRING transactionId PK "NOT NULL"
+        STRING iun PK "NOT NULL"
+        LONG ApproximateCreationDateTime "NOT NULL"
+    }
+
+    %% RELAZIONI
+
+    
+    RaddRegistryV2 ||--|| address : ""
+    RaddRegistryV2 ||--|| normalizedAddress : ""
+
+    RaddRegistryV2 ||--|{ RaddTransactionEntity : "1:N"
+
+    RaddTransactionEntity ||--|{ OperationsIunEntity : "1:N"
+
+
+    %% STILE
+
+    style RaddTransactionEntity fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style RaddRegistryV2 fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style address fill:#FFFFFF,stroke:#000000,stroke-width:1px,color:#000000
+    style normalizedAddress fill:#FFFFFF,stroke:#000000,stroke-width:1px,color:#000000
+    style OperationsIunEntity fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000

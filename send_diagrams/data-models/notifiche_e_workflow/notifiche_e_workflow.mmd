@@ -7,6 +7,7 @@ config:
 erDiagram
 
     %% diagram version: 0.0.1
+    
     %% sources:
     %% - dc-pn-Notifications.yaml
     %%   id: urn:send:pn:notifications
@@ -14,6 +15,17 @@ erDiagram
     %% - dc-pn-timeline.yaml
     %%   id: urn:send:pn:timelines
     %%   version: 0.0.1
+
+    %% CONVENZIONI
+    %% - Entità principali in grassetto nel titolo
+    %% - Entità principali evidenziate con stroke-width:2px
+    %% - PK marcata con PK
+    %% - Campi obbligatori marcati con "NOT NULL"
+    %% - Solo Object e Array di Object di primo livello modellati come entità separate
+    %% - Array di primitive mantenuti come campo, es. ARRAY[STRING]
+    %% - Nome entità figlia uguale al nome campo
+    %% - Relazioni tra root e figli senza etichetta di cardinalità
+    %% - Relazioni ordinate dalla root verso gli oggetti figli
 
     Direction LR
 
