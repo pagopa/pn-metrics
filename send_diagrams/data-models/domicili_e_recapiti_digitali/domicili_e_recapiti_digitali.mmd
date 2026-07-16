@@ -1,0 +1,71 @@
+---
+config:
+  layout: elk
+  theme: base
+---
+erDiagram
+
+    %% diagram version: 0.0.1
+
+    %% sources:
+    %% - pn-user-attributes Address Book + User Consents
+    %% - dc-user-attributes.yaml
+
+    direction LR
+
+    VerificationCode {
+        STRING VC-recipient_type-recipient_id PK "NOT NULL"
+        STRING addressHash-channelType PK "NOT NULL"
+        STRING validationCode "NOT NULL"
+        LONG ttl "NOT NULL"
+        STRING address
+        TIMESTAMP created "NOT NULL"
+        TIMESTAMP lastModified "NOT NULL"
+    }
+
+    VerifiedAddress {
+        STRING VA-recipient_type-recipient_id PK "NOT NULL"
+        STRING addressHash-channelType PK "NOT NULL"
+        TIMESTAMP created "NOT NULL"
+        TIMESTAMP lastModified "NOT NULL"
+    }
+
+    DigitalDomicile {
+        STRING AB-recipient_type-recipient_id PK "NOT NULL"
+        STRING LEGAL-sender_id-type PK "NOT NULL"
+        STRING addressHash "NOT NULL"
+        TIMESTAMP created "NOT NULL"
+        TIMESTAMP lastModified "NOT NULL"
+    }
+
+    DigitalAddress {
+        STRING AB-recipient_type-recipient_id PK "NOT NULL"
+        STRING COURTESY-sender_id-type PK "NOT NULL"
+        STRING addressHash "NOT NULL"
+        TIMESTAMP created "NOT NULL"
+        TIMESTAMP lastModified "NOT NULL"
+    }
+
+    Consent {
+        STRING CO-recipient_type-recipient_id PK "NOT NULL"
+        STRING consent_type-version PK "NOT NULL"
+        BOOLEAN accepted "NOT NULL"
+        TIMESTAMP created "NOT NULL"
+        TIMESTAMP lastModified "NOT NULL"
+    }
+
+    %% RELAZIONI
+
+    VerifiedAddress ||--o{ VerificationCode : ""
+
+    VerifiedAddress ||--o{ DigitalDomicile : ""
+
+    VerifiedAddress ||--o{ DigitalAddress : ""
+
+    %% STILE
+
+    style VerificationCode fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style VerifiedAddress fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style DigitalDomicile fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style DigitalAddress fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style Consent fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000

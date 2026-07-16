@@ -35,6 +35,11 @@ erDiagram
 
     Direction LR
 
+    NotificationsRequest {
+        STRING iun PK "NOT NULL"
+        STRING requestId
+    }
+
     pn_Notifications {
         STRING iun PK
         ARRAY recipients
@@ -66,6 +71,9 @@ erDiagram
 
     %% RELAZIONI
 
+    NotificationsRequest ||--|| pn_Notifications : "1:1"
+
+
     %% RaddTransactionEntity.transactionId = OperationsIunEntity.transactionId
     RaddTransactionEntity ||--o{ OperationsIunEntity : "1:N"
 
@@ -86,6 +94,7 @@ erDiagram
 
     %% STILE
 
+    style NotificationsRequest fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style pn_Notifications fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style pn_Timeline fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style RaddRegistryV2 fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
