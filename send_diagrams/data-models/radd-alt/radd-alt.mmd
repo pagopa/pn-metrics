@@ -32,7 +32,7 @@ erDiagram
 
     direction LR
 
-    **RaddRegistryV2** {
+    RaddRegistryV2 {
         STRING partnerId PK "NOT NULL"
         STRING locationId PK "NOT NULL"
         OBJECT address
@@ -73,7 +73,7 @@ erDiagram
         STRING longitude "NOT NULL"
     }
 
-    **RaddTransactionEntity** {
+    RaddTransactionEntity {
         STRING transactionId PK "NOT NULL"
         STRING operationType PK "NOT NULL"
         STRING operationId "NOT NULL"
@@ -94,7 +94,7 @@ erDiagram
         LONG ApproximateCreationDateTime "NOT NULL"
     }
 
-    **OperationsIunEntity** {
+    OperationsIunEntity {
         STRING transactionId PK "NOT NULL"
         STRING iun PK "NOT NULL"
         LONG ApproximateCreationDateTime "NOT NULL"
@@ -103,18 +103,18 @@ erDiagram
     %% RELAZIONI
 
     
-    **RaddRegistryV2** ||--|| address : ""
-    **RaddRegistryV2** ||--|| normalizedAddress : ""
+    RaddRegistryV2 ||--|| address : ""
+    RaddRegistryV2 ||--|| normalizedAddress : ""
 
-    **RaddRegistryV2** ||--|{ **RaddTransactionEntity** : "1:N"
+    RaddRegistryV2 ||--|{ RaddTransactionEntity : "1:N"
 
-    **RaddTransactionEntity** ||--|{ **OperationsIunEntity** : "1:N"
+    RaddTransactionEntity ||--|{ OperationsIunEntity : "1:N"
 
 
     %% STILE
 
-    style **RaddTransactionEntity** fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    style **RaddRegistryV2** fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style RaddTransactionEntity fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style RaddRegistryV2 fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style address fill:#FFFFFF,stroke:#000000,stroke-width:1px,color:#000000
     style normalizedAddress fill:#FFFFFF,stroke:#000000,stroke-width:1px,color:#000000
-    style **OperationsIunEntity** fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style OperationsIunEntity fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
