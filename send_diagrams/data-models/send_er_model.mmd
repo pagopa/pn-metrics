@@ -7,6 +7,8 @@ erDiagram
 
     %% diagram version: 0.0.1
 
+    %% diagram version: 0.0.1
+
     %% sources:
     %% - dc-pn-Notifications.yaml
     %%   id: urn:send:pn:notifications
@@ -69,6 +71,29 @@ erDiagram
         STRING iun PK
     }
 
+    pn_EcAnagrafica {
+        STRING cxId PK
+    }
+
+    pn_EcRichieste {
+        STRING requestId PK
+        STRING XPagopaExtchCxId FK
+    }
+
+    pn_EcRichiesteMetadati {
+        STRING requestId PK
+        STRING XPagopaExtchCxId FK
+    }
+
+    pn_EcRichiesteConversione {
+        STRING requestId PK
+    }
+
+    pn_EcConversionePDF {
+        STRING fileKey PK
+        STRING requestId FK
+    }
+
     %% RELAZIONI
 
     NotificationsRequest ||--|| pn_Notifications : "1:1"
@@ -92,6 +117,21 @@ erDiagram
     %% Join a livello di destinatario: pn_Notifications.iun = pn_Timeline.iun AND pn_Timeline.recIndex identifica il destinatario della notifica
     pn_Notifications ||--o{ pn_Timeline : "1:N"
 
+    %% pn_EcRichieste.XPagopaExtchCxId = pn_EcAnagrafica.cxId
+    pn_EcAnagrafica ||--o{ pn_EcRichieste : "1:N"
+
+    %% pn_EcRichiesteMetadati.XPagopaExtchCxId = pn_EcAnagrafica.cxId
+    pn_EcAnagrafica ||--o{ pn_EcRichiesteMetadati : "1:N"
+
+    %% pn_EcRichieste.requestId = pn_EcRichiesteMetadati.requestId
+    pn_EcRichieste ||--|| pn_EcRichiesteMetadati : "1:1"
+
+    %% pn_EcRichieste.requestId = pn_EcRichiesteConversione.requestId
+    pn_EcRichieste o|--|| pn_EcRichiesteConversione : "0..1:1"
+
+    %% pn_EcConversionePDF.requestId = pn_EcRichiesteConversione.requestId
+    pn_EcRichiesteConversione ||--o{ pn_EcConversionePDF : "1:N"
+
     %% STILE
 
     style NotificationsRequest fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
@@ -100,4 +140,8 @@ erDiagram
     style RaddRegistryV2 fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style RaddTransactionEntity fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style OperationsIunEntity fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    
+    style pn_EcAnagrafica fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_EcRichieste fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_EcRichiesteMetadati fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_EcRichiesteConversione fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_EcConversionePDF fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000

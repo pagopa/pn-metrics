@@ -105,7 +105,9 @@ erDiagram
     
     RaddRegistryV2 ||--|| address : ""
     RaddRegistryV2 ||--|| normalizedAddress : ""
+
     RaddRegistryV2 ||--|{ RaddTransactionEntity : "1:N"
+
     RaddTransactionEntity ||--|{ OperationsIunEntity : "1:N"
 
 
