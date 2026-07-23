@@ -7,8 +7,6 @@ erDiagram
 
     %% diagram version: 0.0.1
 
-    %% diagram version: 0.0.1
-
     %% sources:
     %% - dc-pn-Notifications.yaml
     %%   id: urn:send:pn:notifications
@@ -94,10 +92,13 @@ erDiagram
         STRING requestId FK
     }
 
+    pn_UserAttributes {
+        STRING recipientId PK
+    }
+
     %% RELAZIONI
 
     NotificationsRequest ||--|| pn_Notifications : "1:1"
-
 
     %% RaddTransactionEntity.transactionId = OperationsIunEntity.transactionId
     RaddTransactionEntity ||--o{ OperationsIunEntity : "1:N"
@@ -117,6 +118,10 @@ erDiagram
     %% Join a livello di destinatario: pn_Notifications.iun = pn_Timeline.iun AND pn_Timeline.recIndex identifica il destinatario della notifica
     pn_Notifications ||--o{ pn_Timeline : "1:N"
 
+    %% pn_Notifications.recipients[].recipientId = UserAttributes.recipientId
+    %% Una notifica può avere più destinatari e un destinatario può comparire in più notifiche
+    pn_Notifications }o--o{ pn_UserAttributes : "N:M"
+
     %% pn_EcRichieste.XPagopaExtchCxId = pn_EcAnagrafica.cxId
     pn_EcAnagrafica ||--o{ pn_EcRichieste : "1:N"
 
@@ -135,6 +140,7 @@ erDiagram
     %% STILE
 
     style NotificationsRequest fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_UserAttributes fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style pn_Notifications fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style pn_Timeline fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style RaddRegistryV2 fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000

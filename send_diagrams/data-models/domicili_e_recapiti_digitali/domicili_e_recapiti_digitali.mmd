@@ -8,8 +8,9 @@ erDiagram
     %% diagram version: 0.0.1
 
     %% sources:
-    %% - pn-user-attributes Address Book + User Consents
-    %% - dc-user-attributes.yaml
+    %% - dc-pn-user-attributes.yaml
+    %%   id: urn:send:recapiti-deleghe:user-attributes
+    %%   version: 0.0.1
 
     direction LR
 
@@ -56,11 +57,21 @@ erDiagram
 
     %% RELAZIONI
 
-    VerifiedAddress ||--o{ VerificationCode : ""
+    %% VerificationCode.addressHash-channelType = VerifiedAddress.addressHash-channelType
+    %% Un indirizzo verificato deriva da un precedente record di validazione OTP
+    VerificationCode ||--o| VerifiedAddress : "1:0..1"
 
-    VerifiedAddress ||--o{ DigitalDomicile : ""
+    %% VerifiedAddress.addressHash-channelType = DigitalDomicile.addressHash
+    %% Un indirizzo verificato può essere utilizzato da uno o più domicili legali (default o per ente)
+    VerifiedAddress ||--o{ DigitalDomicile : "1:N"
 
-    VerifiedAddress ||--o{ DigitalAddress : ""
+    %% VerifiedAddress.addressHash-channelType = DigitalAddress.addressHash
+    %% Un indirizzo verificato può essere utilizzato da uno o più recapiti di cortesia (default o per ente)
+    VerifiedAddress ||--o{ DigitalAddress : "1:N"
+
+    %% Consent.rcptId = DigitalDomicile.rcptId
+    %% Alcuni domicili legali (es. SERCQ) richiedono il previo consenso dell'utente
+    Consent ||--o{ DigitalDomicile : "1:N"
 
     %% STILE
 
