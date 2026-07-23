@@ -5,7 +5,7 @@ config:
 ---
 erDiagram
 
-    %% diagram version: 0.0.1
+    %% diagram version: 1.0.0
 
     %% sources:
     %% - dc-pn-user-attributes.yaml
@@ -69,7 +69,7 @@ erDiagram
     %% Un indirizzo verificato può essere utilizzato da uno o più recapiti di cortesia (default o per ente)
     VerifiedAddress ||--o{ DigitalAddress : "1:N"
 
-    %% Consent.rcptId = DigitalDomicile.rcptId
+    %% Consent.recipient_id  = DigitalDomicile.recipient_id 
     %% Alcuni domicili legali (es. SERCQ) richiedono il previo consenso dell'utente
     Consent ||--o{ DigitalDomicile : "1:N"
 

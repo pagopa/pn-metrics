@@ -5,7 +5,7 @@ config:
 ---
 erDiagram
 
-    %% diagram version: 0.0.1
+    %% diagram version: 1.0.0
 
     %% sources:
     %% - dc-pn-Notifications.yaml
@@ -25,6 +25,9 @@ erDiagram
     %%   version: 0.0.1
     %% - dc-pn-EcRichiesteMetadati.yaml
     %%   id: urn:send:postalizzazione:pn-ecrichiestemetadati
+    %%   version: 0.0.1
+    %% - dc-pn-user-attributes.yaml
+    %%   id: urn:send:recapiti-deleghe:user-attributes
     %%   version: 0.0.1
 
     %% CONVENZIONI
@@ -136,6 +139,11 @@ erDiagram
 
     %% pn_EcConversionePDF.requestId = pn_EcRichiesteConversione.requestId
     pn_EcRichiesteConversione ||--o{ pn_EcConversionePDF : "1:N"
+
+    %% pn_Timeline.timelineElementId = transform(pn_EcRichiesteMetadati.requestId)
+    %% (rimozione prefisso fino a "~", PREPARE_* -> SEND_*, rimozione suffisso .PCRETRY_<n>)
+    %% Un elemento timeline può essere associato a più record di postalizzazione (retry)
+    pn_Timeline ||--o{ pn_EcRichiesteMetadati : "1:N"
 
     %% STILE
 
