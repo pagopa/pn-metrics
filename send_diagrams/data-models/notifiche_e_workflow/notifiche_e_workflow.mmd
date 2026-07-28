@@ -6,26 +6,15 @@ config:
 
 erDiagram
 
-    %% diagram version: 0.0.1
+    %% diagram version: 1.0.0
     
     %% sources:
     %% - dc-pn-Notifications.yaml
     %%   id: urn:send:pn:notifications
-    %%   version: 0.0.1
+    %%   version: 1.0.0
     %% - dc-pn-timeline.yaml
     %%   id: urn:send:pn:timelines
-    %%   version: 0.0.1
-
-    %% CONVENZIONI
-    %% - Entità principali in grassetto nel titolo
-    %% - Entità principali evidenziate con stroke-width:2px
-    %% - PK marcata con PK
-    %% - Campi obbligatori marcati con "NOT NULL"
-    %% - Solo Object e Array di Object di primo livello modellati come entità separate
-    %% - Array di primitive mantenuti come campo, es. ARRAY[STRING]
-    %% - Nome entità figlia uguale al nome campo
-    %% - Relazioni tra root e figli senza etichetta di cardinalità
-    %% - Relazioni ordinate dalla root verso gli oggetti figli
+    %%   version: 1.0.0
 
     Direction LR
 
@@ -49,6 +38,7 @@ erDiagram
         STRING paNotificationId "NOT NULL"
         INTEGER paFee
         STRING paymentExpirationDate
+        INTEGER physicalCommunicationPriority
         STRING physicalCommunicationType
         ARRAY recipients "NOT NULL"
         STRING requestId
@@ -70,9 +60,9 @@ erDiagram
         STRING contentType "NOT NULL"
         OBJECT digests
         OBJECT ref "NOT NULL"
-        BOOLEAN requiresAck
+        BOOLEAN requireAck
         BOOLEAN sendByMail
-        STRING title "NOT NULL"
+        STRING title
     }
 
     languages {
@@ -123,14 +113,16 @@ erDiagram
     %% RELAZIONI
 
     NotificationsRequest ||--|| pn_Notifications : "1:1"
+    %% Join a livello di notifica: pn_Notifications.iun = pn_Timeline.iun
+    %% Join a livello di destinatario: pn_Notifications.iun = pn_Timeline.iun AND pn_Timeline.recIndex identifica il destinatario della notifica
     pn_Notifications ||--o{ pn_Timeline : "1:N"
-    pn_Notifications ||--o{ documents : "1:N"
-    pn_Notifications ||--o{ languages : "1:N"
-    pn_Notifications ||--o{ recipients : "1:N"
-    pn_Notifications ||--o| usedServices : "1:0..1"
+    pn_Notifications ||--o{ documents : ""
+    pn_Notifications ||--o{ languages : ""
+    pn_Notifications ||--o{ recipients : ""
+    pn_Notifications ||--o| usedServices : ""
     pn_Timeline ||--o{ legalFactId : "1:N"
-    pn_Timeline ||--o| statusInfo : "1:0..1"
-    pn_Timeline ||--o| *details : "1:0..1"
+    pn_Timeline ||--o| statusInfo : ""
+    pn_Timeline ||--o| *details : ""
 
     %% STILE
 
