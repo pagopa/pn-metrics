@@ -1,0 +1,89 @@
+---
+config:
+  layout: elk
+  theme: base
+  themeVariables:
+    background: "#FFFFFF"
+    labelBackgroundColor: "#FFFFFF"
+    labelTextColor: "#000000"
+    entityBkgColor: "#FFFFFF"
+    entityBorderColor: "#777777"
+    entityTextColor: "#111111"
+    attributeBkgColor: "#FFFFFF"
+    attributeTextColor: "#111111"
+    relationshipColor: "#777777"
+    lineColor: "#777777"
+    primaryColor: "#FFFFFF"
+    primaryBorderColor: "#777777"
+    primaryTextColor: "#111111"
+---
+erDiagram
+    direction LR
+
+    SENDER {
+        string senderId PK
+    }
+
+    RECIPIENT {
+        string recipientId PK
+        string recipientType
+    }
+
+    DIGITAL_ADDRESS {
+        string partitionKey PK
+        string sortKey PK
+        string recipientType
+        string recipientId FK
+        string senderId FK
+        string addressType
+        string addressHash
+        string created
+        string lastModified
+        string importFlag
+    }
+
+    LEGAL_ADDRESS {
+        string partitionKey PK
+        string sortKey PK
+        string recipientType
+        string recipientId FK
+        string senderId FK
+        string addressType
+        string addressHash
+        string created
+        string lastModified
+        string importFlag
+    }
+
+    VERIFICATION_CODE {
+        string partitionKey PK
+        string sortKey PK
+        string recipientType
+        string recipientId FK
+        string senderId FK
+        string addressType
+        string created
+        string lastModified
+        string validationCode
+        int ttl
+        string clearAddress
+        string language
+        string importFlag
+    }
+
+    RECIPIENT ||--o{ DIGITAL_ADDRESS : "1:N"
+    RECIPIENT ||--o{ LEGAL_ADDRESS : "1:N"
+    RECIPIENT ||--o{ VERIFICATION_CODE : "1:N"
+
+    SENDER ||--o{ DIGITAL_ADDRESS : "1:N"
+    SENDER ||--o{ LEGAL_ADDRESS : "1:N"
+    SENDER ||--o{ VERIFICATION_CODE : "1:N"
+
+    VERIFICATION_CODE }o--|| DIGITAL_ADDRESS : "validates email"
+    VERIFICATION_CODE }o--|| LEGAL_ADDRESS : "validates PEC"
+
+    style SENDER fill:#FFFFFF,stroke:#777777,color:#111111
+    style RECIPIENT fill:#FFFFFF,stroke:#777777,color:#111111
+    style DIGITAL_ADDRESS fill:#FFFFFF,stroke:#777777,color:#111111
+    style LEGAL_ADDRESS fill:#FFFFFF,stroke:#777777,color:#111111
+    style VERIFICATION_CODE fill:#FFFFFF,stroke:#777777,color:#111111
