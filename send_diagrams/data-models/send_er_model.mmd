@@ -99,6 +99,13 @@ erDiagram
         STRING recipientId PK
     }
 
+    pn_Mandate {
+        STRING sk PK
+        STRING pk FK
+        STRING s_delegate FK
+        STRING s_mandateid
+    }
+
     %% RELAZIONI
 
     NotificationsRequest ||--|| pn_Notifications : "1:1"
@@ -144,6 +151,16 @@ erDiagram
     %% (rimozione prefisso fino a "~", PREPARE_* -> SEND_*, rimozione suffisso .PCRETRY_<n>)
     %% Un elemento timeline può essere associato a più record di postalizzazione (retry)
     pn_Timeline ||--o{ pn_EcRichiesteMetadati : "1:N"
+
+    %% pn_Mandate.pk = remove_prefix(pn_UserAttributes.pk,'AB#') (delegante)
+    %% pn_Mandate.s_delegate = remove_prefix(pn_UserAttributes.pk,'AB#') (delegato)
+    %% Nota: I campi pk e s_delegate non sono esportati nel Data Lake tramite dc-pn-mandate.yaml.
+    %%       Ma sono verificabili tramite pn_mandate_json_view in Athena.
+    pn_UserAttributes }o--o{ pn_Mandate : "N:M"
+
+    %% pn_Mandate.a_iuns[].iun = pn_Notifications.iun
+    %% Relazione valorizzata principalmente per deleghe CIE
+    pn_Mandate }o--o{ pn_Notifications : "N:M"
 
     %% STILE
 
