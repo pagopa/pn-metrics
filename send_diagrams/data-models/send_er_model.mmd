@@ -29,6 +29,9 @@ erDiagram
     %% - dc-pn-user-attributes.yaml
     %%   id: urn:send:recapiti-deleghe:user-attributes
     %%   version: 0.0.1
+    %% - dc-pn-mandate.yaml
+    %%   id: urn:send:recapiti-deleghe:mandate
+    %%   version: 0.0.2
 
     %% CONVENZIONI
     %% - Sono riportate esclusivamente le entità principali
@@ -99,9 +102,9 @@ erDiagram
         STRING recipientId PK
     }
 
-    pn_Mandate {
+    Deleghe {
         STRING sk PK
-        STRING pk FK
+        STRING Deleghe_pk FK
         STRING s_delegate FK
         STRING s_mandateid
     }
@@ -152,15 +155,15 @@ erDiagram
     %% Un elemento timeline può essere associato a più record di postalizzazione (retry)
     pn_Timeline ||--o{ pn_EcRichiesteMetadati : "1:N"
 
-    %% pn_Mandate.pk = remove_prefix(pn_UserAttributes.pk,'AB#') (delegante)
-    %% pn_Mandate.s_delegate = remove_prefix(pn_UserAttributes.pk,'AB#') (delegato)
+    %% Deleghe.pk = remove_prefix(pn_UserAttributes.pk,'AB#') (delegante)
+    %% Deleghe.s_delegate = remove_prefix(pn_UserAttributes.pk,'AB#') (delegato)
     %% Nota: I campi pk e s_delegate non sono esportati nel Data Lake tramite dc-pn-mandate.yaml.
     %%       Ma sono verificabili tramite pn_mandate_json_view in Athena.
-    pn_UserAttributes }o--o{ pn_Mandate : "N:M"
+    pn_UserAttributes }o--o{ Deleghe : "N:M"
 
-    %% pn_Mandate.a_iuns[].iun = pn_Notifications.iun
+    %% Deleghe.a_iuns[].iun = pn_Notifications.iun
     %% Relazione valorizzata principalmente per deleghe CIE
-    pn_Mandate }o--o{ pn_Notifications : "N:M"
+    Deleghe }o--o{ pn_Notifications : "N:M"
 
     %% STILE
 
@@ -176,3 +179,4 @@ erDiagram
     style pn_EcRichiesteMetadati fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style pn_EcRichiesteConversione fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style pn_EcConversionePDF fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style Deleghe fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000

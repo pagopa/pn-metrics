@@ -8,13 +8,14 @@ erDiagram
     %% diagram version: 1.0.0
 
     %% sources:
-    %% - dc-pn-mandate.yaml
-    %%   id: urn:send:recapiti-deleghe:mandate
+    %% - dc-pn-Deleghe.yaml
+    %%   id: urn:send:recapiti-deleghe:Deleghe
     %%   version: 0.0.2
 
     direction LR
 
-    mandate {
+    Deleghe {
+        STRING Deleghe_pk PK "NOT NULL"
         STRING sk PK "NOT NULL"
         BOOLEAN b_delegateisperson "NULL"
         BOOLEAN b_delegatorisperson "NULL"
@@ -44,8 +45,8 @@ erDiagram
     a_taxonomycodes {
         STRING taxonomyCode
     }
-    DELEGHETRIGGERHELPER {
-        STRING pk PK "NOT NULL"
+    DelegheTriggerHelper {
+        STRING DelegheTriggerHelper_pk PK "NOT NULL"
         STRING sk PK "NOT NULL"
         NUMBER i_ttl "NOT NULL"
         STRING s_delegatoruid "NOT NULL"
@@ -53,16 +54,16 @@ erDiagram
     }
 
     %% RELAZIONI
-    mandate ||--o{ a_visibilityids : ""
-    mandate ||--o{ a_groups : ""
-    mandate ||--o{ a_iuns : ""
-    mandate ||--o{ a_taxonomycodes : ""
-    mandate ||--o| DELEGHETRIGGERHELPER : "1:1"
+    Deleghe ||--o{ a_visibilityids : ""
+    Deleghe ||--o{ a_groups : ""
+    Deleghe ||--o{ a_iuns : ""
+    Deleghe ||--o{ a_taxonomycodes : ""
+    Deleghe ||--o| DelegheTriggerHelper : "1:1"
 
     %% STILE
-    style mandate fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style Deleghe fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style a_visibilityids fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style a_groups fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style a_iuns fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style a_taxonomycodes fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    style DELEGHETRIGGERHELPER fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style DelegheTriggerHelper fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
