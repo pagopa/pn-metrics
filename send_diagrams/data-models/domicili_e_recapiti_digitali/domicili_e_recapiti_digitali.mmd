@@ -5,12 +5,12 @@ config:
 ---
 erDiagram
 
-    %% diagram version: 1.0.0
+    %% diagram version: 1.0.1
 
     %% sources:
     %% - dc-pn-user-attributes.yaml
     %%   id: urn:send:recapiti-deleghe:user-attributes
-    %%   version: 0.0.1
+    %%   version: 1.0.1
 
     direction LR
 
@@ -53,6 +53,7 @@ erDiagram
         BOOLEAN accepted "NOT NULL"
         TIMESTAMP created "NOT NULL"
         TIMESTAMP lastModified "NOT NULL"
+        STRING channel
     }
 
     %% RELAZIONI
