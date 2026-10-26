@@ -115,25 +115,25 @@ erDiagram
         STRING s_mandateid
     }
 
-        NotificationInformal {
+    pn_Notification_Informal {
         STRING iun PK
         STRING requestId FK
         STRING campaignId FK
     }
 
-    TimelinesInformal {
+    pn_Timelines_Informal {
         STRING timelineElementId PK
         STRING iun FK
         INT recIndex FK
         STRING campaignId FK
     }
 
-    Campaigns {
+    pn_Campaigns {
         STRING senderId PK
         STRING campaignId PK
     }
 
-    CampaignStatistics {
+    pn_Campaign_Statistics {
         STRING senderId PK
         STRING campaignId PK
     }
@@ -194,28 +194,28 @@ erDiagram
     %% Relazione valorizzata principalmente per deleghe CIE
     Deleghe }o--o{ pn_Notifications : "N:M"
 
-        %% COMUNICAZIONI BONARIE
+    %% COMUNICAZIONI BONARIE
 
-    %% NotificationsRequest.requestId = NotificationInformal.requestId
-    %% NotificationsRequest.iun e NotificationInformal.iun hanno semantica differente
-    NotificationsRequest ||--|| NotificationInformal : "1:1"
+    %% NotificationsRequest.requestId = pn_Notification_Informal.requestId
+    %% NotificationsRequest.iun e pn_Notification_Informal.iun hanno semantica differente
+    NotificationsRequest ||--|| pn_Notification_Informal : "1:1"
 
-    %% Join a livello di comunicazione: NotificationInformal.iun = TimelinesInformal.iun
-    %% Join a livello di destinatario: NotificationInformal.iun = TimelinesInformal.iun AND TimelinesInformal.recIndex identifica il destinatario della comunicazione
-    NotificationInformal ||--o{ TimelinesInformal : "1:N"
+    %% Join a livello di comunicazione: pn_Notification_Informal.iun = pn_Timelines_Informal.iun
+    %% Join a livello di destinatario: pn_Notification_Informal.iun = pn_Timelines_Informal.iun AND pn_Timelines_Informal.recIndex identifica il destinatario della comunicazione
+    pn_Notification_Informal ||--o{ pn_Timelines_Informal : "1:N"
 
-    %% NotificationInformal.campaignId = Campaigns.campaignId
-    NotificationInformal }o--|| Campaigns : "N:1"
+    %% pn_Notification_Informal.campaignId = pn_Campaigns.campaignId
+    pn_Notification_Informal }o--|| pn_Campaigns : "N:1"
 
-    %% NotificationInformal.campaignId = CampaignStatistics.campaignId
-    NotificationInformal }o--|| CampaignStatistics : "N:1"
+    %% pn_Notification_Informal.campaignId = pn_Campaign_Statistics.campaignId
+    pn_Notification_Informal }o--|| pn_Campaign_Statistics : "N:1"
 
-    %% TimelinesInformal.campaignId = CampaignStatistics.campaignId
-    TimelinesInformal }o--|| CampaignStatistics : "N:1"
+    %% pn_Timelines_Informal.campaignId = pn_Campaign_Statistics.campaignId
+    pn_Timelines_Informal }o--|| pn_Campaign_Statistics : "N:1"
 
-    %% Campaigns.senderId = CampaignStatistics.senderId
-    %% Campaigns.campaignId = CampaignStatistics.campaignId
-    Campaigns ||--|| CampaignStatistics : "1:1"
+    %% pn_Campaigns.senderId = pn_Campaign_Statistics.senderId
+    %% pn_Campaigns.campaignId = pn_Campaign_Statistics.campaignId
+    pn_Campaigns ||--|| pn_Campaign_Statistics : "1:1"
 
     %% STILE
 
@@ -232,7 +232,7 @@ erDiagram
     style pn_EcRichiesteConversione fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style pn_EcConversionePDF fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style Deleghe fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    style NotificationInformal fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    style TimelinesInformal fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    style Campaigns fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
-    style CampaignStatistics fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_Notification_Informal fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_Timelines_Informal fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_Campaigns fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_Campaign_Statistics fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
