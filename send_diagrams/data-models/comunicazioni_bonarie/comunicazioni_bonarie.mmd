@@ -1,0 +1,204 @@
+---
+config:
+  layout: elk
+  theme: base
+---
+
+erDiagram
+
+    %% diagram version: 1.1.0
+
+    direction LR
+
+    NotificationsRequest {
+        string iun PK "NOT NULL"
+        string requestId "NOT NULL"
+    }
+
+    NotificationInformal {
+        string iun PK "NOT NULL"
+        array documents
+        string group
+        string idempotenceToken
+        string abstract
+        string requestId "NOT NULL"
+        string paNotificationId "NOT NULL"
+        int physicalCommunicationPriority
+        array recipients "NOT NULL"
+        string senderDenomination "NOT NULL"
+        string senderPaId "NOT NULL"
+        string senderTaxId "NOT NULL"
+        timestamp sentAt "NOT NULL"
+        string sourceChannel "NOT NULL"
+        string sourceChannelDetails "NOT NULL"
+        string physicalCommunicationType
+        string subject "NOT NULL"
+        string taxonomyCode "NOT NULL"
+        string version "NOT NULL"
+        object usedServices
+        string campaignId
+        string communicationType
+    }
+
+    documents {
+        string contentType "NOT NULL"
+        object digests
+        object ref "NOT NULL"
+        boolean requireAck
+        boolean sendByMail
+        string title
+    }
+
+    recipients {
+        string denomination "NOT NULL"
+        object digitalDomicile
+        array payments
+        string recipientId "NOT NULL"
+        string recipientType "NOT NULL"
+        array languages
+        string messageId
+    }
+
+    payments {
+        string creditorTaxId "NOT NULL"
+        string noticeCode "NOT NULL"
+        object pagoPaForm "NOT NULL"
+        int amount "NOT NULL"
+        string dueDate
+    }
+
+    languages {
+        string lang
+    }
+
+    usedServices {
+        boolean physicalAddressLookup
+    }
+
+    TimelinesInformal {
+        string timelineElementId PK "NOT NULL"
+        string category "NOT NULL"
+        timestamp businessTimestamp
+        object details
+        string iun "NOT NULL"
+        array legalFactId
+        timestamp notificationSentAt "NOT NULL"
+        string paId "NOT NULL"
+        string reworkId
+        object statusInfo
+        timestamp timestamp "NOT NULL"
+        string campaignId
+        string communicationType "NOT NULL"
+    }
+
+    legalFactId {
+        string category
+        string key
+    }
+
+    statusInfo {
+        string actual
+        timestamp statusChangeTimestamp
+        boolean statusChanged
+    }
+
+    Campaigns {
+        string senderId PK "NOT NULL"
+        string campaignId PK "NOT NULL"
+        string title "NOT NULL"
+        string descriptionScope "NOT NULL"
+        string startDate "NOT NULL"
+        string endDate "NOT NULL"
+        string status "NOT NULL"
+        string senderContact
+        string serviceName
+        string serviceId "NOT NULL"
+        boolean sensitiveContent
+        boolean stopOnViewed
+        string taxonomyCode "NOT NULL"
+        array workflow "NOT NULL"
+    }
+
+    workflow {
+        string channel "NOT NULL"
+        array desiredFeedback
+        boolean includeAttachment
+        array recipientType "NOT NULL"
+        string timeout
+    }
+
+    CampaignStatistics {
+        string senderId PK "NOT NULL"
+        string campaignId PK "NOT NULL"
+        int totalSent
+        int totalAccepted
+        int totalRefused
+        int totalViewed
+        int totalUndeliverable
+        int totalDelivered
+        int workflowDone
+        int digitalSentIO
+        int digitalSentEMAIL
+        int digitalSentPEC
+        int digitalSentSMS
+        int analogSentRS
+        int receivedIO
+        int receivedEMAIL
+        int receivedPEC
+        int receivedANALOG
+        int viewedIO
+        int firstView
+        int viewedWEB
+        int paid
+        string lastCompletedTimestamp
+    }
+
+    %% RELAZIONI
+
+    %% Correlazione: NotificationsRequest.requestId = NotificationInformal.requestId
+    %% NotificationsRequest.iun e NotificationInformal.iun hanno semantica differente
+    NotificationsRequest ||--|| NotificationInformal : "1:1"
+
+    %% Join a livello di comunicazione: NotificationInformal.iun = TimelinesInformal.iun
+    %% Join a livello di destinatario: NotificationInformal.iun = TimelinesInformal.iun AND TimelinesInformal.details.recIndex identifica il destinatario
+    NotificationInformal ||--o{ TimelinesInformal : "1:N"
+
+    NotificationInformal ||--o{ documents : ""
+    NotificationInformal ||--o{ recipients : ""
+    NotificationInformal ||--o| usedServices : ""
+
+    recipients ||--o{ payments : ""
+    recipients ||--o{ languages : ""
+
+    TimelinesInformal ||--o{ legalFactId : "1:N"
+    TimelinesInformal ||--o| statusInfo : ""
+
+    %% Relazione logica: NotificationInformal.campaignId = Campaigns.campaignId
+    NotificationInformal }o--|| Campaigns : "N:1"
+
+    %% Relazione logica: NotificationInformal.campaignId = CampaignStatistics.campaignId
+    NotificationInformal }o--|| CampaignStatistics : "N:1"
+
+    %% Relazione logica: TimelinesInformal.campaignId = CampaignStatistics.campaignId
+    TimelinesInformal }o--|| CampaignStatistics : "N:1"
+
+    %% Relazione tramite chiave composta senderId + campaignId
+    Campaigns ||--|| CampaignStatistics : "1:1"
+
+    Campaigns ||--|{ workflow : ""
+
+    %% STILE
+
+    style NotificationsRequest fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style NotificationInformal fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style TimelinesInformal fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style Campaigns fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style CampaignStatistics fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style documents fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style recipients fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style payments fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style languages fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style usedServices fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style workflow fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style legalFactId fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style statusInfo fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
