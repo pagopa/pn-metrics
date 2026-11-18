@@ -1,0 +1,146 @@
+---
+config:
+  layout: elk
+  theme: base
+---
+
+erDiagram
+
+    %% diagram version: 1.0.0
+
+    %% sources:
+    %% - PaperTrackings.java
+    %% - PaperTrackingsErrors.java
+    %% - SRS pn-paper-tracker AR
+    %% - SRS pn-paper-tracker RIR
+    %% - SRS pn-paper-tracker 890
+    %% - SRS pn-paper-tracker RS-RIS
+    %% - SRS Attivazione RUN pn-paper-tracker
+    %% - SRS Attivazione campione OCR pn-paper-tracker
+
+    direction LR
+
+    pn_PaperTrackings {
+        STRING trackingId PK "NOT NULL"
+        STRING attemptId "GSI Partition Key"
+        STRING pcRetry "GSI Sort Key"
+        STRING productType
+        STRING unifiedDeliveryDriver
+        ARRAY events
+        OBJECT paperStatus
+        OBJECT validationFlow
+        OBJECT validationConfig
+        STRING nextRequestIdPcretry
+        STRING state
+        STRING businessState
+        STRING pendingFinalEventId
+        TIMESTAMP createdAt
+        TIMESTAMP updatedAt
+        LONG ttl
+        TIMESTAMP notificationReworkRequestTimestamp
+        STRING notificationReworkId
+        STRING processingMode
+        STRING analogRequestClientId
+    }
+
+    events {
+        TIMESTAMP requestTimestamp
+        STRING statusCode
+        TIMESTAMP statusTimestamp
+        STRING productType
+        STRING deliveryFailureCause
+        OBJECT discoveredAddress
+        ARRAY attachments
+        STRING registeredLetterCode
+    }
+
+    paperStatus {
+        STRING registeredLetterCode
+        STRING deliveryFailureCause
+        OBJECT discoveredAddress
+        STRING finalStatusCode
+        TIMESTAMP validatedSequenceTimestamp
+        ARRAY validatedAttachment
+        ARRAY validatedEvents
+        BOOLEAN finalDematFound
+        TIMESTAMP paperDeliveryTimestamp
+    }
+
+    validatedAttachment {
+        STRING uri
+        STRING type
+    }
+
+    validationFlow {
+        ARRAY ocrRequests
+        TIMESTAMP recag012StatusTimestamp
+    }
+
+    ocrRequests {
+        STRING documentType
+        TIMESTAMP requestTimestamp
+        TIMESTAMP responseTimestamp
+        STRING eventId
+    }
+
+    validationConfig {
+        ARRAY requiredAttachmentsRefinementStock890
+        ARRAY sendOcrAttachmentsFinalValidationStock890
+        ARRAY sendOcrAttachmentsFinalValidation
+        BOOLEAN strictFinalValidationStock890
+        STRING ocrEnabled
+        STRING ocrFilterTemporal
+        ARRAY ocrFilterUnifiedDeliveryDriver
+    }
+
+    pn_PaperTrackingsErrors {
+        STRING trackingId PK "NOT NULL"
+        TIMESTAMP created "Sort Key - NOT NULL"
+        STRING category
+        OBJECT details
+        STRING flowThrow
+        STRING eventThrow
+        STRING eventIdThrow
+        STRING productType
+        STRING type
+        LONG ttl
+        STRING unifiedDeliveryDriver
+        STRING registeredLetterCode
+    }
+
+    details {
+        STRING cause
+        STRING message
+        OBJECT additionalDetails
+    }
+
+    %% RELAZIONI TRA TABELLE PRINCIPALI
+
+    %% Join:
+    %% pn_PaperTrackings.trackingId = pn_PaperTrackingsErrors.trackingId
+    pn_PaperTrackings ||--o{ pn_PaperTrackingsErrors : "1:N"
+
+    %% STRUTTURE EMBEDDED
+    %% Non rappresentano tabelle DynamoDB autonome
+
+    pn_PaperTrackings ||--o{ events : ""
+    pn_PaperTrackings ||--o| paperStatus : ""
+    pn_PaperTrackings ||--o| validationFlow : ""
+    pn_PaperTrackings ||--o| validationConfig : ""
+
+    paperStatus ||--o{ validatedAttachment : ""
+    validationFlow ||--o{ ocrRequests : ""
+
+    pn_PaperTrackingsErrors ||--o| details : ""
+
+    %% STILE
+
+    style pn_PaperTrackings fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_PaperTrackingsErrors fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style events fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style paperStatus fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style validatedAttachment fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style validationFlow fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style ocrRequests fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style validationConfig fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style details fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
