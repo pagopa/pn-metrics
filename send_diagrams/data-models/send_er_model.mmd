@@ -39,6 +39,11 @@ erDiagram
         %%   - source: data-quality.yml (pn-workflow-manager)
         %%      version: 1.0.0
 
+     %% - paper_tracker
+        %% - source: PaperTrackings.java
+        %% - source: PaperTrackingsErrors.java
+        %% version: 1.0.0
+
     %% CONVENZIONI
     %% - Sono riportate esclusivamente le entità principali
     %% - Sono riportati solamente attributi PK e FK
@@ -138,6 +143,15 @@ erDiagram
         STRING campaignId PK
     }
 
+    pn_PaperTrackings {
+        STRING trackingId PK
+    }
+
+    pn_PaperTrackingsErrors {
+        STRING trackingId PK
+        TIMESTAMP created PK
+    }
+
     %% RELAZIONI
 
     NotificationsRequest ||--|| pn_Notifications : "1:1"
@@ -194,7 +208,9 @@ erDiagram
     %% Relazione valorizzata principalmente per deleghe CIE
     Deleghe }o--o{ pn_Notifications : "N:M"
 
-    %% COMUNICAZIONI BONARIE
+    %% pn_PaperTrackings.trackingId = pn_PaperTrackingsErrors.trackingId
+    %% Un tracking puo essere associato a zero o piu errori o warning
+    pn_PaperTrackings ||--o{ pn_PaperTrackingsErrors : "1:N"
 
     %% NotificationsRequest.requestId = pn_Notification_Informal.requestId
     %% NotificationsRequest.iun e pn_Notification_Informal.iun hanno semantica differente
@@ -218,7 +234,6 @@ erDiagram
     pn_Campaigns ||--|| pn_Campaign_Statistics : "1:1"
 
     %% STILE
-
     style NotificationsRequest fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style pn_UserAttributes fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style pn_Notifications fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
@@ -236,3 +251,5 @@ erDiagram
     style pn_Timelines_Informal fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style pn_Campaigns fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
     style pn_Campaign_Statistics fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_PaperTrackings fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
+    style pn_PaperTrackingsErrors fill:#FFFFFF,stroke:#000000,stroke-width:2px,color:#000000
