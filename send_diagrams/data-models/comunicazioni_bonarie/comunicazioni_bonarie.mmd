@@ -6,7 +6,7 @@ config:
 
 erDiagram
 
-    %% diagram version: 1.0.0
+    %% diagram version: 1.0.1
 
     direction LR
 
@@ -115,6 +115,7 @@ erDiagram
         string serviceId "NOT NULL"
         boolean sensitiveContent
         boolean stopOnViewed
+        boolean stopOnPaid
         string taxonomyCode "NOT NULL"
         array workflow "NOT NULL"
     }
